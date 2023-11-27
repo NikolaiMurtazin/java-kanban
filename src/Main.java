@@ -42,36 +42,6 @@ public class Main {
         System.out.println("All subtasks:");
         System.out.println(taskManager.getAllSubtask());
 
-        // Изменение статусов задач
-        task1.setStatus(TaskStatus.IN_PROGRESS);
-        task1.setTitle("Yandex");
-        task1.setDescription("Дописать трекер задач");
-        task2.setStatus(TaskStatus.DONE);
-
-        // Вывод задач без обновлений
-        System.out.println("All tasks:");
-        System.out.println(taskManager.getAllTasks());
-
-        // Обновление
-        taskManager.updateTask(task1);
-        taskManager.updateTask(task2);
-
-        // Вывод задач после обновлений
-        System.out.println("All tasks:");
-        System.out.println(taskManager.getAllTasks());
-
-        // Обновление и вывод эпиков
-        epic1.setTitle("Маленький проект");
-        epic1.setDescription("Реализация маленького проекта");
-
-        System.out.println("All epics:");
-        System.out.println(taskManager.getAllEpic());
-
-        taskManager.updateEpic(epic1);
-
-        System.out.println("All epics:");
-        System.out.println(taskManager.getAllEpic());
-
         // Обновление и вывод подзадач
         subtask11.setStatus(TaskStatus.DONE);
         subtask11.setTitle("1");
@@ -79,19 +49,19 @@ public class Main {
 
         subtask21.setStatus(TaskStatus.DONE);
 
-        System.out.println("All subtasks:");
-        System.out.println(taskManager.getAllSubtask());
-
+        taskManager.updateTask(task1);
+        taskManager.updateEpic(epic1);
         taskManager.updateSubtask(subtask11);
         taskManager.updateSubtask(subtask12);
         taskManager.updateSubtask(subtask21);
 
+        System.out.println("All tasks:");
+        System.out.println(taskManager.getAllTasks());
+        System.out.println("All epics:");
+        System.out.println(taskManager.getAllEpic());
         System.out.println("All subtasks:");
         System.out.println(taskManager.getAllSubtask());
 
-        // Вывод после проверки статусов
-        System.out.println("All epics:");
-        System.out.println(taskManager.getAllEpic());
 
         // Вывод задач по айди
         System.out.println("TaskById:");

@@ -48,19 +48,16 @@ public class TaskManager {
     }
 
     // Получение по идентификатору
-    public String getTaskById(Integer idTask) {
-        Task task = allTasks.get(idTask);
-        return task.getTitle();
+    public Task getTaskById(Integer idTask) {
+        return allTasks.get(idTask);
     }
 
-    public String getEpicById(Integer idEpic) {
-        Epic epic = allEpics.get(idEpic);
-        return epic.getTitle();
+    public Epic getEpicById(Integer idEpic) {
+        return allEpics.get(idEpic);
     }
 
-    public String getSubtaskById(Integer idSubtask) {
-        Subtask subtask = allSubtasks.get(idSubtask);
-        return subtask.getTitle();
+    public Subtask getSubtaskById(Integer idSubtask) {
+        return allSubtasks.get(idSubtask);
     }
 
     // Создание задач, эпиков и подзадач
@@ -75,7 +72,7 @@ public class TaskManager {
     }
 
     public void createNewSubtask(Subtask subtask) {
-        if(allEpics.containsKey(subtask.getEpicId())) {
+        if (allEpics.containsKey(subtask.getEpicId())) {
             allSubtasks.put(generateId(), subtask);
             subtask.setId(id);
             Epic epic = allEpics.get(subtask.getEpicId());
@@ -87,21 +84,21 @@ public class TaskManager {
 
     //Обновление задач, эпиков, подзадач
     public void updateTask(Task task) {
-        if(allTasks.containsKey(task.getId())) {
+        if (allTasks.containsKey(task.getId())) {
             allTasks.put(task.getId(), task);
         }
 
     }
 
     public void updateEpic(Epic epic) {
-        if(allEpics.containsKey(epic.getId())) {
+        if (allEpics.containsKey(epic.getId())) {
             allEpics.put(epic.getId(), epic);
         }
 
     }
 
     public void updateSubtask(Subtask subtask) {
-        if(allSubtasks.containsKey((subtask.getId()))) {
+        if (allSubtasks.containsKey((subtask.getId()))) {
             allSubtasks.put(subtask.getId(), subtask);
             Epic epic = allEpics.get(subtask.getEpicId());
             epicStatus(epic);
@@ -116,7 +113,7 @@ public class TaskManager {
 
     public void deleteEpic(Integer idEpic) {
         Epic epic = allEpics.remove(idEpic);
-        if(!(epic == null)) {
+        if (epic != null) {
             for (Integer id : epic.getSubtasks()) {
                 allSubtasks.remove(id);
             }
@@ -124,11 +121,13 @@ public class TaskManager {
     }
 
     public void deleteSubtask(Integer idSubtask) {
-        allSubtasks.remove(idSubtask);
-        Subtask subtask = allSubtasks.get(idSubtask);
-        Epic epic = allEpics.get(subtask.getEpicId());
-        epic.getSubtasks().remove(idSubtask);
-        epicStatus(epic);
+        Subtask subtask = allSubtasks.remove(idSubtask);
+        if (subtask != null) {
+            Epic epic = allEpics.get(subtask.getEpicId());
+            epic.getSubtasks().remove(idSubtask);
+            epicStatus(epic);
+        }
+
     }
 
     // Получение списка всех задач определенного эпика
