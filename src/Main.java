@@ -23,8 +23,8 @@ public class Main {
         Subtask subtask11 = new Subtask("Подзадача 1", "Выполнить часть проекта", epic1.getId());
         Subtask subtask12 = new Subtask("Подзадача 2", "Завершить разработку", epic1.getId());
 
-        taskManager.createNewSubtask(subtask11, epic1);
-        taskManager.createNewSubtask(subtask12, epic1);
+        taskManager.createNewSubtask(subtask11);
+        taskManager.createNewSubtask(subtask12);
 
         Epic epic2 = new Epic("Deutsch", "Сделать домашку");
 
@@ -32,7 +32,7 @@ public class Main {
 
         Subtask subtask21 = new Subtask("Задача 1", "Прочитать текст и пересказать", epic2.getId());
 
-        taskManager.createNewSubtask(subtask21, epic2);
+        taskManager.createNewSubtask(subtask21);
 
         // Вывод всех задач, эпиков, подзадач
         System.out.println("All tasks:");
@@ -88,10 +88,6 @@ public class Main {
 
         System.out.println("All subtasks:");
         System.out.println(taskManager.getAllSubtask());
-
-        // Проверка статусов эпиков и изменение, если надо
-        taskManager.epicStatus(epic1);
-        taskManager.epicStatus(epic2);
 
         // Вывод после проверки статусов
         System.out.println("All epics:");
