@@ -7,38 +7,46 @@ import task.TaskStatus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
-public class InMemoryTaskManager {
+public class InMemoryTaskManager implements TaskManager {
 
     private Integer id = 0;
 
     private final HashMap<Integer, Task> allTasks = new HashMap<>();
     private final HashMap<Integer, Epic> allEpics = new HashMap<>();
     private final HashMap<Integer, Subtask> allSubtasks = new HashMap<>();
+    private final List<Task> taskViewHistory = new ArrayList<>(10);
 
     // Вывод созданных задач, эпиков и подзадач (должен возвращать, а не выводит в консоль)
+    @Override
     public ArrayList<Task> getAllTasks() {
         return new ArrayList<>(allTasks.values());
     }
 
+    @Override
     public ArrayList<Epic> getAllEpic() {
         return new ArrayList<>(allEpics.values());
     }
 
+    @Override
     public ArrayList<Subtask> getAllSubtask() {
         return new ArrayList<>(allSubtasks.values());
     }
 
     //удаление всех задач, эпиков и подзадач
+    @Override
     public void deleteAllTasks() {
         allTasks.clear();
     }
 
+    @Override
     public void deleteAllEpic() {
         allEpics.clear();
         allSubtasks.clear();
     }
 
+    @Override
     public void deleteAllSubtask() {
         allSubtasks.clear();
         for (Epic epic : allEpics.values()) {
@@ -47,20 +55,45 @@ public class InMemoryTaskManager {
         }
     }
 
-    // Получение по идентификатору
+    // Получение по идентификатору и занесение id в историю просмотров
+    @Override
     public Task getTaskById(Integer idTask) {
+        Task task = allTasks.get(idTask);
+        if(taskViewHistory.size() == 10) {
+            taskViewHistory.remove(0);
+            taskViewHistory.add(task);
+        } else {
+            taskViewHistory.add(task);
+        }
         return allTasks.get(idTask);
     }
 
+    @Override
     public Epic getEpicById(Integer idEpic) {
+        Epic epic = allEpics.get(idEpic);
+        if(taskViewHistory.size() == 10) {
+            taskViewHistory.remove(0);
+            taskViewHistory.add(epic);
+        } else {
+            taskViewHistory.add(epic);
+        }
         return allEpics.get(idEpic);
     }
 
+    @Override
     public Subtask getSubtaskById(Integer idSubtask) {
+        Subtask subtask = allSubtasks.get(idSubtask);
+        if(taskViewHistory.size() == 10) {
+            taskViewHistory.remove(0);
+            taskViewHistory.add(subtask);
+        } else {
+            taskViewHistory.add(subtask);
+        }
         return allSubtasks.get(idSubtask);
     }
 
     // Создание задач, эпиков и подзадач
+    @Override
     public void createNewTask(Task task) {
         allTasks.put(generateId(), task);
         task.setId(id);
@@ -138,6 +171,12 @@ public class InMemoryTaskManager {
             result.add(allSubtasks.get(id));
         }
         return result;
+    }
+
+    // История просмотров задач
+    @Override
+    public List<Task> getHistory() {
+        return taskViewHistory;
     }
 
     //Проверка статуса эпика
