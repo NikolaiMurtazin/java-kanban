@@ -50,6 +50,8 @@ public interface TaskManager {
     // Получение списка всех задач определенного эпика
     ArrayList<Subtask> getSubtasksByEpic(Integer idEpic);
 
-    List<Task> getHistory();
+    // Вывод истории просмотров задач по id
+    void taskViewHistory();
+
 
 }

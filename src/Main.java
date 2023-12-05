@@ -1,10 +1,9 @@
-import manager.InMemoryTaskManager;
+
 import manager.Managers;
 import manager.TaskManager;
 import task.Epic;
 import task.Subtask;
 import task.Task;
-import task.TaskStatus;
 
 public class Main {
 
@@ -37,7 +36,27 @@ public class Main {
         Subtask subtask21 = new Subtask("Задача 1", "Прочитать текст и пересказать", epic2.getId());
 
         taskManager.createNewSubtask(subtask21);
-        System.out.println(taskManager.getAllTasks());
+
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(2);
+        taskManager.getEpicById(3);
+        taskManager.getSubtaskById(4);
+        taskManager.getSubtaskById(5);
+        taskManager.getEpicById(6);
+        taskManager.getSubtaskById(7);
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(2);
+        taskManager.getEpicById(3);
+
+        taskManager.taskViewHistory();
+
+        taskManager.getEpicById(3);
+        taskManager.getSubtaskById(4);
+        taskManager.getSubtaskById(5);
+
+        taskManager.taskViewHistory();
+
+
 
 
 

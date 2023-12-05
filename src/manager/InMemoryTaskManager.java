@@ -7,16 +7,22 @@ import task.TaskStatus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+
+import static manager.Managers.getDefaultHistory;
 
 public class InMemoryTaskManager implements TaskManager {
+
+    private final HistoryManager historyManager;
+
+    InMemoryTaskManager() {
+        historyManager = getDefaultHistory();
+    }
 
     private Integer id = 0;
 
     private final HashMap<Integer, Task> allTasks = new HashMap<>();
     private final HashMap<Integer, Epic> allEpics = new HashMap<>();
     private final HashMap<Integer, Subtask> allSubtasks = new HashMap<>();
-    private final List<Task> taskViewHistory = new ArrayList<>(10);
 
     // Вывод созданных задач, эпиков и подзадач (должен возвращать, а не выводит в консоль)
     @Override
@@ -59,36 +65,21 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskById(Integer idTask) {
         Task task = allTasks.get(idTask);
-        if(taskViewHistory.size() == 10) {
-            taskViewHistory.remove(0);
-            taskViewHistory.add(task);
-        } else {
-            taskViewHistory.add(task);
-        }
+        historyManager.add(task);
         return allTasks.get(idTask);
     }
 
     @Override
     public Epic getEpicById(Integer idEpic) {
         Epic epic = allEpics.get(idEpic);
-        if(taskViewHistory.size() == 10) {
-            taskViewHistory.remove(0);
-            taskViewHistory.add(epic);
-        } else {
-            taskViewHistory.add(epic);
-        }
+        historyManager.add(epic);
         return allEpics.get(idEpic);
     }
 
     @Override
     public Subtask getSubtaskById(Integer idSubtask) {
         Subtask subtask = allSubtasks.get(idSubtask);
-        if(taskViewHistory.size() == 10) {
-            taskViewHistory.remove(0);
-            taskViewHistory.add(subtask);
-        } else {
-            taskViewHistory.add(subtask);
-        }
+        historyManager.add(subtask);
         return allSubtasks.get(idSubtask);
     }
 
@@ -173,11 +164,12 @@ public class InMemoryTaskManager implements TaskManager {
         return result;
     }
 
-    // История просмотров задач
+    // Вывод истории просмотров задач по id
     @Override
-    public List<Task> getHistory() {
-        return taskViewHistory;
+    public void taskViewHistory() {
+        System.out.println(historyManager.getHistory());
     }
+
 
     //Проверка статуса эпика
     private void epicStatus(Epic epic) {
