@@ -1,14 +1,17 @@
-package manager;
+package interfaces;
 
 import task.Epic;
 import task.Subtask;
 import task.Task;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public interface TaskManager {
+
     ArrayList<Task> getAllTasks();
+
     ArrayList<Epic> getAllEpic();
 
     ArrayList<Subtask> getAllSubtask();
@@ -31,6 +34,7 @@ public interface TaskManager {
     void createNewTask(Task task);
 
     void createNewEpic(Epic epic);
+
     void createNewSubtask(Subtask subtask);
 
     //Обновление задач, эпиков, подзадач
@@ -51,7 +55,5 @@ public interface TaskManager {
     ArrayList<Subtask> getSubtasksByEpic(Integer idEpic);
 
     // Вывод истории просмотров задач по id
-    void taskViewHistory();
-
-
+    LinkedList<Task> getHistory();
 }

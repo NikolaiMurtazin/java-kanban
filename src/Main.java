@@ -1,6 +1,6 @@
 
 import manager.Managers;
-import manager.TaskManager;
+import interfaces.TaskManager;
 import task.Epic;
 import task.Subtask;
 import task.Task;
@@ -9,8 +9,7 @@ public class Main {
 
     public static void main(String[] args) {
 
-        Managers managers = new Managers();
-        TaskManager taskManager = managers.getDefault();
+        TaskManager taskManager = Managers.getDefault();
 
         // Добавил задачи, эпики, подзадачи
         Task task1 = new Task("Yandex.Practicum", "Начать писать уже трекер задач");
@@ -48,18 +47,12 @@ public class Main {
         taskManager.getTaskById(2);
         taskManager.getEpicById(3);
 
-        taskManager.taskViewHistory();
+        System.out.println(taskManager.getHistory());
 
         taskManager.getEpicById(3);
         taskManager.getSubtaskById(4);
         taskManager.getSubtaskById(5);
 
-        taskManager.taskViewHistory();
-
-
-
-
-
-
+        System.out.println(taskManager.getHistory());
     }
 }

@@ -1,8 +1,14 @@
 package manager;
 
-public class Managers {
+import interfaces.HistoryManager;
+import interfaces.TaskManager;
 
-    public TaskManager getDefault() {
+public final class Managers {
+
+    private Managers() {
+    }
+
+    public static TaskManager getDefault() {
         return new InMemoryTaskManager();
     }
 

@@ -1,27 +1,33 @@
 package manager;
 
+import interfaces.HistoryManager;
 import task.Task;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
 public class InMemoryHistoryManager implements HistoryManager {
 
-    private final List<Task> taskViewHistory = new ArrayList<>(10);
+    /*
+        Не совсем понимаю, правильно ли я использовал клонирование, также я поменял ArrayList на LinkedList,
+        но нашел информации, как ограничить LinkedList 10 ячейками. Или этого не нужно делать, так как я уже
+        ограничил размер LinkedList через if ?
+    */
+
+    private final LinkedList<Task> taskViewHistory = new LinkedList<>();
+
+
     private static final int MAX_HISTORY_SIZE = 10;
 
     @Override
     public void add(Task task) {
-        if(taskViewHistory.size() == MAX_HISTORY_SIZE) {
-            taskViewHistory.remove(0);
-            taskViewHistory.add(task);
-        } else {
-            taskViewHistory.add(task);
+        if (taskViewHistory.size() == MAX_HISTORY_SIZE) {
+            taskViewHistory.removeFirst();
         }
+        taskViewHistory.addLast(task);
     }
 
     @Override
-    public List<Task> getHistory() {
-        return taskViewHistory;
+    public LinkedList<Task> getHistory() {
+        return (LinkedList<Task>) taskViewHistory.clone();
     }
 }
