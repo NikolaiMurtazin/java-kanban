@@ -10,7 +10,7 @@ import task.TaskStatus;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-
+import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -173,10 +173,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     // Вывод истории просмотров задач по id
     @Override
-    public LinkedList<Task> getHistory() {
+    public List<Task> getHistory() {
         return historyManager.getHistory();
     }
-
 
     //Проверка статуса эпика
     private void epicStatus(Epic epic) {
