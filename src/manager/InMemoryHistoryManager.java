@@ -6,7 +6,6 @@ import task.Task;
 import java.util.HashMap;
 import java.util.ArrayList;
 
-
 public class InMemoryHistoryManager implements HistoryManager {
 
     private final HashMap<Integer, Node> taskViewHistory = new HashMap<>();
@@ -18,7 +17,6 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-
         if (containsKey(task.getId())) {
             Node current = taskViewHistory.get(task.getId());
             removeNode(current);
@@ -26,7 +24,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         Node newNode = new Node(task, null, tail);
         linkLast(newNode);
         taskViewHistory.put(task.getId(), newNode);
-
     }
 
     @Override
@@ -81,16 +78,16 @@ public class InMemoryHistoryManager implements HistoryManager {
         return taskViewHistory.containsKey(id);
     }
 
-     static class Node {
+    static class Node {
 
         Task task;
         Node next;
         Node prev;
 
-         public Node(Task task, Node next, Node prev) {
-             this.task = task;
-             this.next = next;
-             this.prev = prev;
-         }
-     }
+        public Node(Task task, Node next, Node prev) {
+            this.task = task;
+            this.next = next;
+            this.prev = prev;
+        }
+    }
 }
