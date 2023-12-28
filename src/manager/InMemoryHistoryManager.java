@@ -3,7 +3,9 @@ package manager;
 import interfaces.HistoryManager;
 import task.Task;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.ArrayList;
+
 
 public class InMemoryHistoryManager implements HistoryManager {
 
@@ -12,18 +14,16 @@ public class InMemoryHistoryManager implements HistoryManager {
     private Node tail;
 
     public InMemoryHistoryManager() {
-        head = null;
-        tail = null;
     }
 
     @Override
     public void add(Task task) {
 
-        if (taskViewHistory.containsKey(task.getId())) {
+        if (containsKey(task.getId())) {
             Node current = taskViewHistory.get(task.getId());
             removeNode(current);
         }
-        Node newNode = new Node(task);
+        Node newNode = new Node(task, null, tail);
         linkLast(newNode);
         taskViewHistory.put(task.getId(), newNode);
 
@@ -31,26 +31,24 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void remove(int id) {
-        if (taskViewHistory.containsKey(id)) {
+        if (containsKey(id)) {
             Node nodeToRemove = taskViewHistory.get(id);
             removeNode(nodeToRemove);
         }
     }
 
     @Override
-    public List<Task> getHistory() {
+    public ArrayList<Task> getHistory() {
         return getTask();
     }
 
     private void linkLast(Node newNode) {
         if (tail == null) {
             head = newNode;
-            tail = newNode;
         } else {
             tail.next = newNode;
-            newNode.prev = tail;
-            tail = newNode;
         }
+        tail = newNode;
     }
 
     private ArrayList<Task> getTask() {
@@ -67,7 +65,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (node.prev != null) {
             node.prev.next = node.next;
         } else {
-            head = head.next;
+            head = node.next;
         }
 
         if (node.next != null) {
@@ -78,4 +76,21 @@ public class InMemoryHistoryManager implements HistoryManager {
 
         taskViewHistory.remove(node.task.getId());
     }
+
+    private boolean containsKey(int id) {
+        return taskViewHistory.containsKey(id);
+    }
+
+     static class Node {
+
+        Task task;
+        Node next;
+        Node prev;
+
+         public Node(Task task, Node next, Node prev) {
+             this.task = task;
+             this.next = next;
+             this.prev = prev;
+         }
+     }
 }
