@@ -12,26 +12,17 @@ public class InMemoryHistoryManager implements HistoryManager {
     private Node head;
     private Node tail;
 
-    public InMemoryHistoryManager() {
-    }
-
     @Override
     public void add(Task task) {
-        if (containsKey(task.getId())) {
-            Node current = taskViewHistory.get(task.getId());
-            removeNode(current);
-        }
+        removeNode(task.getId());
         Node newNode = new Node(task, null, tail);
         linkLast(newNode);
         taskViewHistory.put(task.getId(), newNode);
     }
 
     @Override
-    public void remove(int id) {
-        if (containsKey(id)) {
-            Node nodeToRemove = taskViewHistory.get(id);
-            removeNode(nodeToRemove);
-        }
+    public void remove(Integer id) {
+        removeNode(id);
     }
 
     @Override
@@ -58,27 +49,26 @@ public class InMemoryHistoryManager implements HistoryManager {
         return result;
     }
 
-    private void removeNode(Node node) {
-        if (node.prev != null) {
-            node.prev.next = node.next;
-        } else {
-            head = node.next;
-        }
+    private void removeNode(Integer id) {
+        if (taskViewHistory.containsKey(id)) {
+            Node node = taskViewHistory.get(id);
+            if (node.prev != null) {
+                node.prev.next = node.next;
+            } else {
+                head = node.next;
+            }
 
-        if (node.next != null) {
-            node.next.prev = node.prev;
-        } else {
-            tail = node.prev;
-        }
+            if (node.next != null) {
+                node.next.prev = node.prev;
+            } else {
+                tail = node.prev;
+            }
 
-        taskViewHistory.remove(node.task.getId());
+            taskViewHistory.remove(node.task.getId());
+        }
     }
 
-    private boolean containsKey(int id) {
-        return taskViewHistory.containsKey(id);
-    }
-
-    static class Node {
+    private static class Node {
 
         Task task;
         Node next;
