@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface TaskManager {
 
-    ArrayList<Task> getAllTasks();
+    ArrayList<Task> getAllTask();
 
     ArrayList<Epic> getAllEpic();
 

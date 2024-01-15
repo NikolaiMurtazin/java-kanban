@@ -5,26 +5,25 @@ import interfaces.TaskManager;
 import task.Epic;
 import task.Subtask;
 import task.Task;
-import task.TaskStatus;
+import utils.Status;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    private final HistoryManager historyManager = Managers.getDefaultHistory();
+    protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
     private Integer id = 0;
 
-    private final HashMap<Integer, Task> allTasks = new HashMap<>();
-    private final HashMap<Integer, Epic> allEpics = new HashMap<>();
-    private final HashMap<Integer, Subtask> allSubtasks = new HashMap<>();
+    protected final HashMap<Integer, Task> allTasks = new HashMap<>();
+    protected final HashMap<Integer, Epic> allEpics = new HashMap<>();
+    protected final HashMap<Integer, Subtask> allSubtasks = new HashMap<>();
 
     // Вывод созданных задач, эпиков и подзадач (должен возвращать, а не выводит в консоль)
     @Override
-    public ArrayList<Task> getAllTasks() {
+    public ArrayList<Task> getAllTask() {
         return new ArrayList<>(allTasks.values());
     }
 
@@ -198,7 +197,7 @@ public class InMemoryTaskManager implements TaskManager {
         boolean isSubtaskStatusNew = true;
         boolean isSubtaskStatusDone = true;
 
-        ArrayList<TaskStatus> statuses = new ArrayList<>();
+        ArrayList<Status> statuses = new ArrayList<>();
 
         for (Integer id : allSubtasks.keySet()) {
             Subtask subtask = allSubtasks.get(id);
@@ -207,27 +206,39 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
 
-        for (TaskStatus status : statuses) {
-            if (!status.equals(TaskStatus.NEW)) {
+        for (Status status : statuses) {
+            if (!status.equals(Status.NEW)) {
                 isSubtaskStatusNew = false;
                 break;
             }
         }
 
-        for (TaskStatus status : statuses) {
-            if (!status.equals(TaskStatus.DONE)) {
+        for (Status status : statuses) {
+            if (!status.equals(Status.DONE)) {
                 isSubtaskStatusDone = false;
                 break;
             }
         }
 
         if (epic.getSubtasks().isEmpty() || isSubtaskStatusNew) {
-            epic.setStatus(TaskStatus.NEW);
+            epic.setStatus(Status.NEW);
         } else if (isSubtaskStatusDone) {
-            epic.setStatus(TaskStatus.DONE);
+            epic.setStatus(Status.DONE);
         } else {
-            epic.setStatus(TaskStatus.IN_PROGRESS);
+            epic.setStatus(Status.IN_PROGRESS);
         }
+    }
+
+    public HashMap<Integer, Task> getAllTasks() {
+        return allTasks;
+    }
+
+    public HashMap<Integer, Epic> getAllEpics() {
+        return allEpics;
+    }
+
+    public HashMap<Integer, Subtask> getAllSubtasks() {
+        return allSubtasks;
     }
 
     private Integer generateId() {

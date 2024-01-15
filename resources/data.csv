@@ -1,0 +1,10 @@
+id,type,name,status,description,epic
+1,TASK,Yandex.Practicum,NEW,Начать писать уже трекер задач
+2,TASK,Deutsch,NEW,Учить слова
+3,EPIC,Крупный проект,NEW,Реализация крупного проекта
+4,SUBTASK,Подзадача 1,NEW,Выполнить часть проекта,3
+5,SUBTASK,Подзадача 2,NEW,Завершить разработку,3
+6,SUBTASK,Подзадача 3,NEW,Посмотреть видео по программированию,3
+7,EPIC,Deutsch,NEW,Сделать домашку
+
+1,2,3,4,7,
