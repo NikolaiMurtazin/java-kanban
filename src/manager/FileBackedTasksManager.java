@@ -3,73 +3,54 @@ import exeptions.ManagerSaveException;
 import task.Epic;
 import task.Subtask;
 import task.Task;
-import utils.Status;
-import utils.Type;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
+import static manager.FromString.historyFromString;
+import static manager.FromString.taskFromString;
 import static utils.Type.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
-    /*
-        Будут ли дополнительные рекомендации по стилю кода? Может где то методы отсортировать так,
-        чтобы читаемость повысить? А то у меня такое чуство, что столько всего написано, и читаемость стала хуже.
-        Может где добавить доп проверки через if else на поиск null и тд? Это я спрашиваю за все классы.
-    */
+    private final File file;
 
-    private static final String HOME = System.getProperty("user.home");
-
-    private static final String PATH_FILE = "dev/java-kanban/resources/";
-
-    private static final String NAME_FILE = "data.csv";
-
-    private final Path path = Paths.get(HOME, PATH_FILE, NAME_FILE);
-
-    public FileBackedTasksManager() {
-        if (!(Files.exists(path))) {
+    public FileBackedTasksManager(File file) {
+        this.file = new File(String.valueOf(file));
+        if (!(Files.exists(file.toPath()))) {
             try {
-                Files.createFile(path);
-                System.out.println("Файл успешно создан: data.csv");
+                Files.createFile(file.toPath());
+                System.out.println("Файл успешно создан: " + file);
             } catch (IOException e) {
                 System.err.println("Ошибка при создании файла: " + e.getMessage());
             }
         }
-        loadFromFile(path);
     }
 
-    void save() {
-        try (FileWriter writer = new FileWriter(String.valueOf(path), StandardCharsets.UTF_8)) {
+    private void save() {
+        try (FileWriter writer = new FileWriter(String.valueOf(file), StandardCharsets.UTF_8)) {
 
-            writer.write("id,type,name,status,description,epic");
-            HashMap<Integer, String> allTasks = new HashMap<>();
+            writer.write("id,type,name,status,description,epic" + "\n");
 
-            HashMap<Integer, Task> tasks = super.getAllTasks();
+            HashMap<Integer, Task> tasks = super.allTasks;
             for (Integer id : tasks.keySet()) {
-                allTasks.put(id, tasks.get(id).toStringFromFile());
+                writer.write(String.format("%s\n", tasks.get(id).toStringFromFile()));
             }
 
-            HashMap<Integer, Epic> epics = super.getAllEpics();
+            HashMap<Integer, Epic> epics = super.allEpics;
             for (Integer id : epics.keySet()) {
-                allTasks.put(id, epics.get(id).toStringFromFile());
+                writer.write(String.format("%s\n", epics.get(id).toStringFromFile()));
             }
 
-            HashMap<Integer, Subtask> subtasks = super.getAllSubtasks();
+            HashMap<Integer, Subtask> subtasks = super.allSubtasks;
             for (Integer id : subtasks.keySet()) {
-                allTasks.put(id, subtasks.get(id).toStringFromFile());
-            }
-
-            writer.write("\n");
-
-            for (String value : allTasks.values()) {
-                writer.write(String.format("%s\n", value));
+                writer.write(String.format("%s\n", subtasks.get(id).toStringFromFile()));
             }
 
             writer.write("\n");
@@ -82,42 +63,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    static Task fromString(String value) {
-        String[] elements = value.split(",");
-
-        Integer id = Integer.valueOf(elements[0]);
-        Type type = Type.valueOf(elements[1]);
-        String title = elements[2];
-        Status status = Status.valueOf(elements[3]);
-        String description = elements[4];
-        Integer epicId = null;
-
-        final int epicIdInElements = 6;
-        if (epicIdInElements == elements.length) {
-            epicId = Integer.valueOf(elements[5]);
-        }
-        if (type == TASK) {
-            return new Task(id, type, title, description, status);
-        } else if (type == EPIC) {
-            return new Epic(id, type, title, description, status);
-        }  else {
-            return new Subtask(id, type, title, description, status, epicId);
-        }
-    }
-
-    private static List<Integer> historyFromString(String value) {
-        List<Integer> historyId = new ArrayList<>();
-        if(value != null) {
-            String[] idString = value.split(",");
-            for (String id : idString) {
-                historyId.add(Integer.valueOf(id));
-            }
-        }
-        return historyId;
-    }
-
-    void loadFromFile(Path path) { // В ТЗ указано, что его нужна сделать статическим, но у меня не получается
-        try(BufferedReader fileReader = new BufferedReader(new FileReader(String.valueOf((path))))) {
+    static FileBackedTasksManager loadFromFile(File file) {
+        FileBackedTasksManager backedManager = new FileBackedTasksManager(file);
+        try(BufferedReader fileReader = new BufferedReader(new FileReader(file))) {
             String line;
             while (fileReader.ready()) {
                 line = fileReader.readLine();
@@ -130,14 +78,19 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     break;
                 }
 
-                Task task = fromString(line);
+                Task task = taskFromString(line);
 
                 if (task.getType().equals(EPIC)) {
-                    super.createNewEpic((Epic) task); // Что это за обозначение в параметрах метода?
+                    backedManager.allEpics.put(task.getId(), (Epic) task);
                 } else if (task.getType().equals(SUBTASK)) {
-                    super.createNewSubtask((Subtask) task);
+                    backedManager.allSubtasks.put(task.getId(), (Subtask) task);
+                    if (backedManager.allEpics.containsKey(((Subtask) task).getEpicId())) {
+                        backedManager.allSubtasks.put(task.getId(), (Subtask) task);
+                        Epic epic = backedManager.allEpics.get(((Subtask) task).getEpicId());
+                        epic.addSubtask((Subtask) task);
+                    }
                 } else {
-                    super.createNewTask(task);
+                    backedManager.allTasks.put(task.getId(), task);
                 }
             }
 
@@ -148,14 +101,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
 
             for (int id : historyFromString(lineWithHistory)) {
-                if (allTasks.containsKey(id)) {
-                    historyManager.add(allTasks.get(id));
-                } else if (allEpics.containsKey(id)) {
-                    historyManager.add(allEpics.get(id));
-                } else if (allSubtasks.containsKey(id)) {
-                    historyManager.add(allSubtasks.get(id));
+                if (backedManager.allTasks.containsKey(id)) {
+                    backedManager.historyManager.add(backedManager.allTasks.get(id));
+                } else if (backedManager.allEpics.containsKey(id)) {
+                    backedManager.historyManager.add(backedManager.allEpics.get(id));
+                } else if (backedManager.allSubtasks.containsKey(id)) {
+                    backedManager.historyManager.add(backedManager.allSubtasks.get(id));
                 }
             }
+            return backedManager;
         } catch (IOException e) {
             throw new ManagerSaveException("Не удается прочитать файл");
         }
@@ -262,7 +216,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public static void main(String[] args) {
 
-        FileBackedTasksManager testSave = new FileBackedTasksManager();
+        File file = new File("tasks.csv");
+
+        FileBackedTasksManager testSave = new FileBackedTasksManager(file);
 
         Task task1 = new Task("Yandex.Practicum", "Начать писать уже трекер задач");
         Task task2 = new Task("Deutsch", "Учить слова");
@@ -292,11 +248,27 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         testSave.getSubtaskById(4);
         testSave.getEpicById(7);
 
-        FileBackedTasksManager testLoad = new FileBackedTasksManager();
+        System.out.println(testSave.getAllTask());
+        System.out.println(testSave.getAllEpic());
+        System.out.println(testSave.getAllSubtask());
+        System.out.println(testSave.getHistory());
+
+        System.out.println();
+
+        testSave.deleteTask(1);
+        testSave.deleteAllEpic();
+
+        System.out.println(testSave.getAllTask());
+        System.out.println(testSave.getAllEpic());
+        System.out.println(testSave.getAllSubtask());
+        System.out.println(testSave.getHistory());
+
+        System.out.println();
+
+        FileBackedTasksManager testLoad = FileBackedTasksManager.loadFromFile(file);
         System.out.println(testLoad.getAllTask());
         System.out.println(testLoad.getAllEpic());
         System.out.println(testLoad.getAllSubtask());
         System.out.println(testLoad.getHistory());
-
     }
 }

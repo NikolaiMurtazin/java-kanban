@@ -229,18 +229,6 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    public HashMap<Integer, Task> getAllTasks() {
-        return allTasks;
-    }
-
-    public HashMap<Integer, Epic> getAllEpics() {
-        return allEpics;
-    }
-
-    public HashMap<Integer, Subtask> getAllSubtasks() {
-        return allSubtasks;
-    }
-
     private Integer generateId() {
         return ++id;
     }
