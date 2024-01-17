@@ -1,8 +1,10 @@
 package manager;
+
 import exeptions.ManagerSaveException;
 import task.Epic;
 import task.Subtask;
 import task.Task;
+import utils.Type;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -11,18 +13,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.HashMap;
-
-import static manager.FromString.historyFromString;
-import static manager.FromString.taskFromString;
-import static utils.Type.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private final File file;
 
     public FileBackedTasksManager(File file) {
-        this.file = new File(String.valueOf(file));
+        this.file = file;
         if (!(Files.exists(file.toPath()))) {
             try {
                 Files.createFile(file.toPath());
@@ -36,21 +33,18 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private void save() {
         try (FileWriter writer = new FileWriter(String.valueOf(file), StandardCharsets.UTF_8)) {
 
-            writer.write("id,type,name,status,description,epic" + "\n");
+            writer.write("id,type,name,status,description,epic\n");
 
-            HashMap<Integer, Task> tasks = super.allTasks;
-            for (Integer id : tasks.keySet()) {
-                writer.write(String.format("%s\n", tasks.get(id).toStringFromFile()));
+            for (Task task : allTasks.values()) {
+                writer.write(String.format(task.toStringForFile()));
             }
 
-            HashMap<Integer, Epic> epics = super.allEpics;
-            for (Integer id : epics.keySet()) {
-                writer.write(String.format("%s\n", epics.get(id).toStringFromFile()));
+            for (Epic epic : allEpics.values()) {
+                writer.write(String.format(epic.toStringForFile()));
             }
 
-            HashMap<Integer, Subtask> subtasks = super.allSubtasks;
-            for (Integer id : subtasks.keySet()) {
-                writer.write(String.format("%s\n", subtasks.get(id).toStringFromFile()));
+            for (Subtask subtask : allSubtasks.values()) {
+                writer.write(String.format(subtask.toStringForFile()));
             }
 
             writer.write("\n");
@@ -78,11 +72,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     break;
                 }
 
-                Task task = taskFromString(line);
+                Task task = FromString.taskFromString(line);
 
-                if (task.getType().equals(EPIC)) {
+                if (task.getType().equals(Type.EPIC)) {
                     backedManager.allEpics.put(task.getId(), (Epic) task);
-                } else if (task.getType().equals(SUBTASK)) {
+                } else if (task.getType().equals(Type.SUBTASK)) {
                     backedManager.allSubtasks.put(task.getId(), (Subtask) task);
                     if (backedManager.allEpics.containsKey(((Subtask) task).getEpicId())) {
                         backedManager.allSubtasks.put(task.getId(), (Subtask) task);
@@ -100,7 +94,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 lineWithHistory = line;
             }
 
-            for (int id : historyFromString(lineWithHistory)) {
+            for (int id : FromString.historyFromString(lineWithHistory)) {
                 if (backedManager.allTasks.containsKey(id)) {
                     backedManager.historyManager.add(backedManager.allTasks.get(id));
                 } else if (backedManager.allEpics.containsKey(id)) {

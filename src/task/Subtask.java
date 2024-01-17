@@ -29,8 +29,8 @@ public class Subtask extends Task {
     }
 
     @Override
-    public String toStringFromFile() {
-        return String.format("%s,%s,%s,%s,%s,%s", getId(), getType(), getTitle(),
+    public String toStringForFile() {
+        return String.format("%s,%s,%s,%s,%s,%s\n", getId(), getType(), getTitle(),
                 getStatus(), getDescription(), epicId);
     }
 }

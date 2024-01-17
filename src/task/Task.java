@@ -71,8 +71,8 @@ public class Task {
                 '}';
     }
 
-    public String toStringFromFile() {
-        return String.format("%s,%s,%s,%s,%s",
+    public String toStringForFile() {
+        return String.format("%s,%s,%s,%s,%s\n",
                 id, type, title, status, description);
     }
 }
