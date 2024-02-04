@@ -6,6 +6,7 @@ import task.Task;
 import utils.Status;
 import utils.Type;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,20 +22,28 @@ public class FromString {
         String title = elements[2];
         Status status = Status.valueOf(elements[3]);
         String description = elements[4];
+        LocalDateTime startTime;
+        if (elements[5].equals("null")) {
+            startTime = null;
+        } else {
+            startTime = LocalDateTime.parse(elements[5]);
+        }
+        int duration = Integer.parseInt(elements[6]);
 
         if (type == TASK) {
-            return new Task(id, type, title, description, status);
+
+            return new Task(id, type, title, description, status, startTime, duration);
         } else if (type == EPIC) {
-            return new Epic(id, type, title, description, status);
-        }  else {
-            Integer epicId = Integer.valueOf(elements[5]);
-            return new Subtask(id, type, title, description, status, epicId);
+            return new Epic(id, type, title, description, status, startTime, duration);
+        } else {
+            Integer epicId = Integer.valueOf(elements[7]);
+            return new Subtask(id, type, title, description, status, startTime, duration, epicId);
         }
     }
 
     protected static List<Integer> historyFromString(String value) {
         List<Integer> historyId = new ArrayList<>();
-        if(value != null) {
+        if (value != null) {
             String[] idString = value.split(",");
             for (String id : idString) {
                 historyId.add(Integer.valueOf(id));

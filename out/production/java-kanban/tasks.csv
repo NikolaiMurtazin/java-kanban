@@ -1,0 +1,4 @@
+id,type,name,status,description,startTime,duration,epic
+1,TASK,Yandex.Practicum,NEW,Начать писать уже трекер задач,2024-02-01T12:00,60
+2,EPIC,Крупный проект,NEW,Реализация крупного проекта,null,0
+

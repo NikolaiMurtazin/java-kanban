@@ -1,6 +1,6 @@
 package manager;
 
-import exeptions.ManagerSaveException;
+import exceptions.ManagerSaveException;
 import task.Epic;
 import task.Subtask;
 import task.Task;
@@ -13,6 +13,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.time.LocalDateTime;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
@@ -33,7 +34,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private void save() {
         try (FileWriter writer = new FileWriter(String.valueOf(file), StandardCharsets.UTF_8)) {
 
-            writer.write("id,type,name,status,description,epic\n");
+            writer.write("id,type,name,status,description,startTime,duration,epic\n");
 
             for (Task task : allTasks.values()) {
                 writer.write(String.format(task.toStringForFile()));
@@ -59,7 +60,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     static FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager backedManager = new FileBackedTasksManager(file);
-        try(BufferedReader fileReader = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader fileReader = new BufferedReader(new FileReader(file))) {
             String line;
             while (fileReader.ready()) {
                 line = fileReader.readLine();
@@ -89,8 +90,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
 
             String lineWithHistory = null;
-            while ((line = fileReader.readLine()) != null)
-            {
+            while ((line = fileReader.readLine()) != null) {
                 lineWithHistory = line;
             }
 
@@ -152,21 +152,24 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     // Создание задач, эпиков и подзадач
     @Override
-    public void createNewTask(Task task) {
+    public Task createNewTask(Task task) {
         super.createNewTask(task);
         save();
+        return task;
     }
 
     @Override
-    public void createNewEpic(Epic epic) {
+    public Epic createNewEpic(Epic epic) {
         super.createNewEpic(epic);
         save();
+        return epic;
     }
 
     @Override
-    public void createNewSubtask(Subtask subtask) {
+    public Subtask createNewSubtask(Subtask subtask) {
         super.createNewSubtask(subtask);
         save();
+        return subtask;
     }
 
     //Обновление задач, эпиков, подзадач
@@ -210,11 +213,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public static void main(String[] args) {
 
-        File file = new File("tasks.csv");
+        File file = new File(System.getProperty("user.dir") + "/src/main/resources/tasks.csv");
 
         FileBackedTasksManager testSave = new FileBackedTasksManager(file);
 
-        Task task1 = new Task("Yandex.Practicum", "Начать писать уже трекер задач");
+        Task task1 = new Task("Yandex.Practicum", "Начать писать уже трекер задач", LocalDateTime.of(2024, 2, 1, 12, 0, 0), 60);
         Task task2 = new Task("Deutsch", "Учить слова");
 
         testSave.createNewTask(task1);
@@ -224,9 +227,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
         testSave.createNewEpic(epic3);
 
-        Subtask subtask4 = new Subtask("Подзадача 1", "Выполнить часть проекта", epic3.getId());
-        Subtask subtask5 = new Subtask("Подзадача 2", "Завершить разработку", epic3.getId());
-        Subtask subtask6 = new Subtask("Подзадача 3", "Посмотреть видео по программированию", epic3.getId());
+        Subtask subtask4 = new Subtask("Подзадача 1", "Выполнить часть проекта", epic3.getId(), LocalDateTime.of(2024, 2, 1, 15, 0, 0), 30);
+        Subtask subtask5 = new Subtask("Подзадача 2", "Завершить разработку", epic3.getId(), LocalDateTime.of(2024, 2, 1, 16, 30, 0), 20);
+        Subtask subtask6 = new Subtask("Подзадача 3", "Посмотреть видео по программированию", epic3.getId(), LocalDateTime.of(2024, 2, 1, 17, 50, 0), 10);
 
         testSave.createNewSubtask(subtask4);
         testSave.createNewSubtask(subtask5);
@@ -241,16 +244,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         testSave.getEpicById(3);
         testSave.getSubtaskById(4);
         testSave.getEpicById(7);
-
-        System.out.println(testSave.getAllTask());
-        System.out.println(testSave.getAllEpic());
-        System.out.println(testSave.getAllSubtask());
-        System.out.println(testSave.getHistory());
-
-        System.out.println();
-
-        testSave.deleteTask(1);
-        testSave.deleteAllEpic();
 
         System.out.println(testSave.getAllTask());
         System.out.println(testSave.getAllEpic());
