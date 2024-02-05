@@ -46,4 +46,24 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
     void saveEmptyHistory() {
         assertTrue(manager.getHistory().isEmpty());
     }
+
+    @Test
+    void load() {
+        manager.createNewTask(task);
+        manager.createNewEpic(epic);
+        manager.getTaskById(1);
+        manager.getEpicById(2);
+        List<Task> listOfTasks = manager.getAllTask();
+        List<Epic> listOfEpics = manager.getAllEpic();
+        List<Task> listOfHistory = manager.getHistory();
+
+        FileBackedTasksManager testLoad = FileBackedTasksManager.loadFromFile(file);
+        List<Task> listOfUploadedTasks = testLoad.getAllTask();
+        List<Epic> listOfUploadedEpics = testLoad.getAllEpic();
+        List<Task> listOfUploadedHistory = testLoad.getHistory();
+
+        assertEquals(listOfTasks, listOfUploadedTasks);
+        assertEquals(listOfEpics, listOfUploadedEpics);
+        assertEquals(listOfHistory, listOfUploadedHistory);
+    }
 }

@@ -5,10 +5,11 @@ import utils.Type;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Epic extends Task {
     private final ArrayList<Integer> subtasksId;
-    private static LocalDateTime endTime;
+    private LocalDateTime endTime;
 
     public Epic(String title, String description) {
         super(title, description);
@@ -16,7 +17,7 @@ public class Epic extends Task {
         this.subtasksId = new ArrayList<>();
     }
 
-    public Epic(String title, String description, LocalDateTime startTime, int duration) {
+    public Epic(String title, String description, LocalDateTime startTime, long duration) {
         super(title, description, startTime, duration);
         type = Type.EPIC;
         this.subtasksId = new ArrayList<>();
@@ -24,7 +25,7 @@ public class Epic extends Task {
     }
 
     public Epic(Integer id, Type type, String title, String description, Status status, LocalDateTime startTime,
-                int duration) {
+                long duration) {
         super(id, type, title, description, status, startTime, duration);
         this.subtasksId = new ArrayList<>();
         endTime = super.getEndTime();
@@ -47,8 +48,8 @@ public class Epic extends Task {
         return endTime;
     }
 
-    public static void setEndTime(LocalDateTime endTime) {
-        Epic.endTime = endTime;
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 
     @Override
@@ -56,5 +57,19 @@ public class Epic extends Task {
         return "Epic{" +
                 "subtasks=" + subtasksId +
                 "} " + super.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Epic epic = (Epic) o;
+        return Objects.equals(subtasksId, epic.subtasksId) && Objects.equals(endTime, epic.endTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), subtasksId, endTime);
     }
 }

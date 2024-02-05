@@ -1,7 +1,6 @@
 package manager;
 
 import interfaces.TaskManager;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import task.Epic;
 import task.Subtask;
@@ -16,11 +15,6 @@ import static org.junit.jupiter.api.Assertions.*;
 abstract class TaskManagerTest<T extends TaskManager> {
 
     protected T manager;
-
-    @BeforeEach
-    void setUp() {
-        manager = (T) Managers.getDefault();
-    }
 
     @Test
     void createNewTask() {
@@ -109,11 +103,15 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getPrioritizedTasks() {
+        Epic epic = new Epic("Крупный проект", "Реализация крупного проекта");
+        manager.createNewEpic(epic);
+        Subtask subtask = new Subtask("Подзадача 1", "Выполнить часть проекта", epic.getId(),
+                LocalDateTime.of(2024, 2, 1, 15, 0, 0), 30);
+        manager.createNewSubtask(subtask);
         Task task = new Task("Yandex.Practicum", "Начать писать уже трекер задач",
                 LocalDateTime.of(2024, 2, 1, 12, 0, 0), 60);
         manager.createNewTask(task);
-        manager.getTaskById(task.getId());
-        List<Task> list = List.of(task);
+        List<Task> list = List.of(task, subtask);
         List<Task> listOfPrioritizedTasks = manager.getPrioritizedTasks();
 
         assertEquals(list, listOfPrioritizedTasks);

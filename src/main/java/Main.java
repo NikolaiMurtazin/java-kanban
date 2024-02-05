@@ -16,8 +16,7 @@ public class Main {
 
         Task task1 = new Task("Yandex.Practicum", "Начать писать уже трекер задач",
                 LocalDateTime.of(2024, 2, 1, 12, 0, 0), 60);
-        Task task2 = new Task("Deutsch", "Учить слова",
-                LocalDateTime.of(2024, 2, 1, 12, 0, 0), 60);
+        Task task2 = new Task("Deutsch", "Учить слова");
 
         taskManager.createNewTask(task1);
         taskManager.createNewTask(task2);
@@ -26,8 +25,7 @@ public class Main {
 
         taskManager.createNewEpic(epic);
 
-        Subtask subtask4 = new Subtask("Подзадача 1", "Выполнить часть проекта", epic.getId(),
-                LocalDateTime.of(2024, 2, 1, 15, 0, 0), 30);
+        Subtask subtask4 = new Subtask("Подзадача 1", "Выполнить часть проекта", epic.getId());
         Subtask subtask5 = new Subtask("Подзадача 2", "Завершить разработку", epic.getId(),
                 LocalDateTime.of(2024, 2, 1, 16, 0, 0), 30);
         Subtask subtask6 = new Subtask("Подзадача 3", "Посмотреть видео по программированию", epic.getId(), LocalDateTime.of(2024, 2, 1, 17, 0, 0), 30);

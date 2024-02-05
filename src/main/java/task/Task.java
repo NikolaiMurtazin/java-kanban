@@ -3,8 +3,8 @@ package task;
 import utils.Type;
 import utils.Status;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class Task {
     private Integer id;
@@ -13,7 +13,7 @@ public class Task {
     private String description;
     private Status status;
     private LocalDateTime startTime;
-    private Duration duration;
+    private long duration;
 
     public Task(String title, String description) {
         type = Type.TASK;
@@ -22,29 +22,29 @@ public class Task {
         status = Status.NEW;
     }
 
-    public Task(String title, String description, LocalDateTime startTime, int duration) {
+    public Task(String title, String description, LocalDateTime startTime, long duration) {
         type = Type.TASK;
         this.title = title;
         this.description = description;
         status = Status.NEW;
         this.startTime = startTime;
-        this.duration = Duration.ofMinutes(duration);
+        this.duration = duration;
     }
 
     public Task(Integer id, Type type, String title, String description, Status status, LocalDateTime startTime,
-                int duration) {
+                long duration) {
         this.id = id;
         this.type = type;
         this.title = title;
         this.description = description;
         this.status = status;
         this.startTime = startTime;
-        this.duration = Duration.ofMinutes(duration);
+        this.duration = duration;
     }
 
     public LocalDateTime getEndTime() {
-        if (startTime != null) {
-            return startTime.plusSeconds(duration.getSeconds());
+        if (duration > 0) {
+            return startTime.plusMinutes(duration);
         }
         return null;
     }
@@ -94,14 +94,10 @@ public class Task {
     }
 
     public long getDuration() {
-        if (duration != null) {
-            int minute = 60;
-            return duration.getSeconds() / minute;
-        }
-        return 0;
+        return duration;
     }
 
-        public void setDuration(Duration duration) {
+    public void setDuration(long duration) {
         this.duration = duration;
     }
 
@@ -119,6 +115,19 @@ public class Task {
 
     public String toStringForFile() {
         return String.format("%s,%s,%s,%s,%s,%s,%s\n",
-                id, type, title, status, description, startTime, getDuration());
+                id, type, title, status, description, startTime, duration);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return duration == task.duration && Objects.equals(id, task.id) && type == task.type && Objects.equals(title, task.title) && Objects.equals(description, task.description) && status == task.status && Objects.equals(startTime, task.startTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, type, title, description, status, startTime, duration);
     }
 }
