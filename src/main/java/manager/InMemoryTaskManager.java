@@ -31,7 +31,7 @@ public class InMemoryTaskManager implements TaskManager {
             return task.getStartTime();
         }
     }).thenComparing(Task::getId);
-    private final Set<Task> prioritizedTasks = new TreeSet<>(comparator);
+    protected final Set<Task> prioritizedTasks = new TreeSet<>(comparator);
 
     @Override
     public ArrayList<Task> getAllTask() {

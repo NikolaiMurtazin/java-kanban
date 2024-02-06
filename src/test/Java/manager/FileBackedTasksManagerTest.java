@@ -3,6 +3,7 @@ package manager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import task.Epic;
+import task.Subtask;
 import task.Task;
 
 import java.io.File;
@@ -51,19 +52,34 @@ class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager>
     void load() {
         manager.createNewTask(task);
         manager.createNewEpic(epic);
+        Subtask subtask1 = new Subtask("Подзадача 1", "Выполнить часть проекта", epic.getId(),
+                LocalDateTime.of(2024, 2, 1, 15, 0, 0), 30);
+        Subtask subtask2 = new Subtask("Подзадача 2", "Завершить разработку", epic.getId(),
+                LocalDateTime.of(2024, 2, 1, 16, 0, 0), 30);
+        manager.createNewSubtask(subtask1);
+        manager.createNewSubtask(subtask2);
         manager.getTaskById(1);
         manager.getEpicById(2);
+        manager.getSubtaskById(3);
+        manager.getSubtaskById(4);
+
         List<Task> listOfTasks = manager.getAllTask();
         List<Epic> listOfEpics = manager.getAllEpic();
+        List<Subtask> listOfSubtasks = manager.getAllSubtask();
         List<Task> listOfHistory = manager.getHistory();
+        List<Task> listOfPrioritizedTasks = manager.getPrioritizedTasks();
 
         FileBackedTasksManager testLoad = FileBackedTasksManager.loadFromFile(file);
         List<Task> listOfUploadedTasks = testLoad.getAllTask();
         List<Epic> listOfUploadedEpics = testLoad.getAllEpic();
+        List<Subtask> listOfUploadedSubtasks = testLoad.getAllSubtask();
         List<Task> listOfUploadedHistory = testLoad.getHistory();
+        List<Task> listOfUploadedPrioritizedTasks = testLoad.getPrioritizedTasks();
 
         assertEquals(listOfTasks, listOfUploadedTasks);
         assertEquals(listOfEpics, listOfUploadedEpics);
+        assertEquals(listOfSubtasks, listOfUploadedSubtasks);
         assertEquals(listOfHistory, listOfUploadedHistory);
+        assertEquals(listOfPrioritizedTasks, listOfUploadedPrioritizedTasks);
     }
 }
