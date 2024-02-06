@@ -83,10 +83,11 @@ public class InMemoryTaskManager implements TaskManager {
     //Обновление задач, эпиков, подзадач
     @Override
     public void updateTask(Task task) {
-        if (allTasks.containsKey(task.getId())) {
-            allTasks.put(task.getId(), task);
+        if (allTasks.containsKey(task.getId()))
+        {
             Task taskRemove = allTasks.get(task.getId());
             prioritizedTasks.remove(taskRemove);
+            allTasks.put(task.getId(), task);
             addTaskToPrioritizedList(task);
         }
     }
@@ -101,11 +102,11 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubtask(Subtask subtask) {
         if (allSubtasks.containsKey((subtask.getId()))) {
+            Subtask subtaskRemove = allSubtasks.get(subtask.getId());
+            prioritizedTasks.remove(subtaskRemove);
             allSubtasks.put(subtask.getId(), subtask);
             Epic epic = allEpics.get(subtask.getEpicId());
             epicStatus(epic);
-            Subtask subtaskRemove = allSubtasks.get(subtask.getId());
-            prioritizedTasks.remove(subtaskRemove);
             addTaskToPrioritizedList(subtask);
             if (subtask.getStartTime() != null) {
                 updateEpicTime(epic);
