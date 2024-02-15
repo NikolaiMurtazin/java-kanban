@@ -19,6 +19,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private final File file;
 
+    public FileBackedTasksManager(String path) {
+        this.file = new File(path);
+    }
+
     public FileBackedTasksManager(File file) {
         this.file = file;
         if (!(Files.exists(file.toPath()))) {
@@ -31,7 +35,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private void save() {
+    protected void save() {
         try (FileWriter writer = new FileWriter(String.valueOf(file), StandardCharsets.UTF_8)) {
 
             writer.write("id,type,name,status,description,startTime,duration,epic\n");

@@ -14,14 +14,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
 
-    File file = new File(System.getProperty("user.dir") + "/src/main/resources/tasks.csv");
+    File file;
     Task task = new Task("Yandex.Practicum", "Начать писать уже трекер задач",
             LocalDateTime.of(2024, 2, 1, 12, 0, 0), 60);
     Epic epic = new Epic("Крупный проект", "Реализация крупного проекта");
 
     @BeforeEach
     void setUp() {
-        file = new File(System.getProperty("user.dir") + "/src/main/resources/tasks.csv");
+        file =  new File(System.getProperty("user.dir") + "/src/main/resources/tasks.csv");
         manager = new FileBackedTasksManager(file);
     }
 
