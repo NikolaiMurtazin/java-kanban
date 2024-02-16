@@ -3,24 +3,24 @@ package manager;
 import task.Epic;
 import task.Subtask;
 import task.Task;
-import utils.Status;
-import utils.Type;
+import utils.TaskStatus;
+import utils.TypeOfTasksForDirectoryTask;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static utils.Type.EPIC;
-import static utils.Type.TASK;
+import static utils.TypeOfTasksForDirectoryTask.EPIC;
+import static utils.TypeOfTasksForDirectoryTask.TASK;
 
 public class FromString {
     protected static Task taskFromString(String value) {
         String[] elements = value.split(",");
 
         Integer id = Integer.valueOf(elements[0]);
-        Type type = Type.valueOf(elements[1]);
+        TypeOfTasksForDirectoryTask type = TypeOfTasksForDirectoryTask.valueOf(elements[1]);
         String title = elements[2];
-        Status status = Status.valueOf(elements[3]);
+        TaskStatus status = TaskStatus.valueOf(elements[3]);
         String description = elements[4];
         LocalDateTime startTime;
         if (elements[5].equals("null")) {

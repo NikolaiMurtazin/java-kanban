@@ -4,7 +4,7 @@ import interfaces.TaskManager;
 import manager.Managers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import utils.Status;
+import utils.TaskStatus;
 
 import java.time.LocalDateTime;
 
@@ -35,8 +35,8 @@ class EpicTest {
         taskManager.createNewSubtask(subtask1);
         taskManager.createNewSubtask(subtask2);
 
-        assertEquals(Status.NEW, subtask1.getStatus());
-        assertEquals(Status.NEW, subtask2.getStatus());
+        assertEquals(TaskStatus.NEW, subtask1.getStatus());
+        assertEquals(TaskStatus.NEW, subtask2.getStatus());
     }
 
     @Test
@@ -44,11 +44,11 @@ class EpicTest {
         taskManager.createNewSubtask(subtask1);
         taskManager.createNewSubtask(subtask2);
 
-        subtask1.setStatus(Status.DONE);
-        subtask2.setStatus(Status.DONE);
+        subtask1.setStatus(TaskStatus.DONE);
+        subtask2.setStatus(TaskStatus.DONE);
 
-        assertEquals(Status.DONE, subtask1.getStatus());
-        assertEquals(Status.DONE, subtask2.getStatus());
+        assertEquals(TaskStatus.DONE, subtask1.getStatus());
+        assertEquals(TaskStatus.DONE, subtask2.getStatus());
     }
 
     @Test
@@ -56,18 +56,18 @@ class EpicTest {
         taskManager.createNewSubtask(subtask1);
         taskManager.createNewSubtask(subtask2);
 
-        subtask2.setStatus(Status.DONE);
+        subtask2.setStatus(TaskStatus.DONE);
 
-        assertEquals(Status.NEW, subtask1.getStatus());
-        assertEquals(Status.DONE, subtask2.getStatus());
+        assertEquals(TaskStatus.NEW, subtask1.getStatus());
+        assertEquals(TaskStatus.DONE, subtask2.getStatus());
     }
 
     @Test
     void subtasksWithTheInProgressStatus() {
         taskManager.createNewSubtask(subtask1);
 
-        subtask1.setStatus(Status.IN_PROGRESS);
+        subtask1.setStatus(TaskStatus.IN_PROGRESS);
 
-        assertEquals(Status.IN_PROGRESS, subtask1.getStatus());
+        assertEquals(TaskStatus.IN_PROGRESS, subtask1.getStatus());
     }
 }

@@ -1,7 +1,7 @@
 package task;
 
-import utils.Status;
-import utils.Type;
+import utils.TaskStatus;
+import utils.TypeOfTasksForDirectoryTask;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -14,18 +14,18 @@ public class Epic extends Task {
 
     public Epic(String title, String description) {
         super(title, description);
-        type = Type.EPIC;
+        type = TypeOfTasksForDirectoryTask.EPIC;
         this.subtasksId = new ArrayList<>();
     }
 
     public Epic(String title, String description, LocalDateTime startTime, long duration) {
         super(title, description, startTime, duration);
-        type = Type.EPIC;
+        type = TypeOfTasksForDirectoryTask.EPIC;
         this.subtasksId = new ArrayList<>();
         endTime = super.getEndTime();
     }
 
-    public Epic(Integer id, Type type, String title, String description, Status status, LocalDateTime startTime,
+    public Epic(Integer id, TypeOfTasksForDirectoryTask type, String title, String description, TaskStatus status, LocalDateTime startTime,
                 long duration) {
         super(id, type, title, description, status, startTime, duration);
         this.subtasksId = new ArrayList<>();

@@ -1,7 +1,7 @@
 package task;
 
-import utils.Type;
-import utils.Status;
+import utils.TypeOfTasksForDirectoryTask;
+import utils.TaskStatus;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -9,30 +9,30 @@ import java.util.Objects;
 public class Task {
 
     private Integer id;
-    protected Type type;
+    protected TypeOfTasksForDirectoryTask type;
     private String title;
     private String description;
-    private Status status;
+    private TaskStatus status;
     private LocalDateTime startTime;
     private long duration;
 
     public Task(String title, String description) {
-        type = Type.TASK;
+        type = TypeOfTasksForDirectoryTask.TASK;
         this.title = title;
         this.description = description;
-        status = Status.NEW;
+        status = TaskStatus.NEW;
     }
 
     public Task(String title, String description, LocalDateTime startTime, long duration) {
-        type = Type.TASK;
+        type = TypeOfTasksForDirectoryTask.TASK;
         this.title = title;
         this.description = description;
-        status = Status.NEW;
+        status = TaskStatus.NEW;
         this.startTime = startTime;
         this.duration = duration;
     }
 
-    public Task(Integer id, Type type, String title, String description, Status status, LocalDateTime startTime,
+    public Task(Integer id, TypeOfTasksForDirectoryTask type, String title, String description, TaskStatus status, LocalDateTime startTime,
                 long duration) {
         this.id = id;
         this.type = type;
@@ -66,7 +66,7 @@ public class Task {
         this.title = title;
     }
 
-    public Type getType() {
+    public TypeOfTasksForDirectoryTask getType() {
         return type;
     }
 
@@ -78,11 +78,11 @@ public class Task {
         this.description = description;
     }
 
-    public Status getStatus() {
+    public TaskStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(TaskStatus status) {
         this.status = status;
     }
 

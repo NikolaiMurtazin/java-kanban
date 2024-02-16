@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import task.Epic;
 import task.Subtask;
 import task.Task;
-import utils.Status;
+import utils.TaskStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,7 +24,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         List<Task> listOfTasks = manager.getAllTask();
 
         assertNotNull(task.getStatus());
-        assertEquals(Status.NEW, task.getStatus());
+        assertEquals(TaskStatus.NEW, task.getStatus());
         assertEquals(List.of(task), listOfTasks);
     }
 
@@ -35,7 +35,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         List<Epic> listOfEpics = manager.getAllEpic();
 
         assertNotNull(epic.getStatus());
-        assertEquals(Status.NEW, epic.getStatus());
+        assertEquals(TaskStatus.NEW, epic.getStatus());
         assertEquals(List.of(epic), listOfEpics);
         assertTrue(epic.getSubtasks().isEmpty());
     }
@@ -51,7 +51,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         List<Subtask> listOfSubtasks = manager.getAllSubtask();
 
         assertNotNull(subtask.getStatus());
-        assertEquals(Status.NEW, subtask.getStatus());
+        assertEquals(TaskStatus.NEW, subtask.getStatus());
         assertEquals(epic.getId(), subtask.getEpicId());
         assertEquals(List.of(subtask), listOfSubtasks);
         assertEquals(List.of(subtask.getId()), epic.getSubtasksId());
@@ -62,20 +62,20 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Task task = new Task("Yandex.Practicum", "Начать писать уже трекер задач",
                 LocalDateTime.of(2024, 2, 1, 12, 0, 0), 60);
         manager.createNewTask(task);
-        task.setStatus(Status.IN_PROGRESS);
+        task.setStatus(TaskStatus.IN_PROGRESS);
         manager.updateTask(task);
 
-        assertEquals(Status.IN_PROGRESS, manager.getTaskById(1).getStatus());
+        assertEquals(TaskStatus.IN_PROGRESS, manager.getTaskById(1).getStatus());
     }
 
     @Test
     void updateEpicAndGetEpicById() {
         Epic epic = new Epic("Крупный проект", "Реализация крупного проекта");
         manager.createNewEpic(epic);
-        epic.setStatus(Status.IN_PROGRESS);
+        epic.setStatus(TaskStatus.IN_PROGRESS);
         manager.updateEpic(epic);
 
-        assertEquals(Status.IN_PROGRESS, manager.getEpicById(1).getStatus());
+        assertEquals(TaskStatus.IN_PROGRESS, manager.getEpicById(1).getStatus());
     }
 
     @Test
@@ -85,10 +85,10 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Subtask subtask = new Subtask("Подзадача 1", "Выполнить часть проекта", epic.getId(),
                 LocalDateTime.of(2024, 2, 1, 15, 0, 0), 30);
         manager.createNewSubtask(subtask);
-        subtask.setStatus(Status.IN_PROGRESS);
+        subtask.setStatus(TaskStatus.IN_PROGRESS);
         manager.updateSubtask(subtask);
 
-        assertEquals(Status.IN_PROGRESS, manager.getSubtaskById(2).getStatus());
+        assertEquals(TaskStatus.IN_PROGRESS, manager.getSubtaskById(2).getStatus());
     }
 
     @Test

@@ -6,7 +6,7 @@ import interfaces.TaskManager;
 import task.Epic;
 import task.Subtask;
 import task.Task;
-import utils.Status;
+import utils.TaskStatus;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -266,7 +266,7 @@ public class InMemoryTaskManager implements TaskManager {
         boolean isSubtaskStatusNew = true;
         boolean isSubtaskStatusDone = true;
 
-        ArrayList<Status> statuses = new ArrayList<>();
+        ArrayList<TaskStatus> statuses = new ArrayList<>();
 
         for (Integer id : allSubtasks.keySet()) {
             Subtask subtask = allSubtasks.get(id);
@@ -275,26 +275,26 @@ public class InMemoryTaskManager implements TaskManager {
             }
         }
 
-        for (Status status : statuses) {
-            if (!status.equals(Status.NEW)) {
+        for (TaskStatus status : statuses) {
+            if (!status.equals(TaskStatus.NEW)) {
                 isSubtaskStatusNew = false;
                 break;
             }
         }
 
-        for (Status status : statuses) {
-            if (!status.equals(Status.DONE)) {
+        for (TaskStatus status : statuses) {
+            if (!status.equals(TaskStatus.DONE)) {
                 isSubtaskStatusDone = false;
                 break;
             }
         }
 
         if (epic.getSubtasks().isEmpty() || isSubtaskStatusNew) {
-            epic.setStatus(Status.NEW);
+            epic.setStatus(TaskStatus.NEW);
         } else if (isSubtaskStatusDone) {
-            epic.setStatus(Status.DONE);
+            epic.setStatus(TaskStatus.DONE);
         } else {
-            epic.setStatus(Status.IN_PROGRESS);
+            epic.setStatus(TaskStatus.IN_PROGRESS);
         }
     }
 

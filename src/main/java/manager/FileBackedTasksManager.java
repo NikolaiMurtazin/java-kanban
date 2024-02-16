@@ -4,7 +4,7 @@ import exceptions.ManagerSaveException;
 import task.Epic;
 import task.Subtask;
 import task.Task;
-import utils.Type;
+import utils.TypeOfTasksForDirectoryTask;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -79,9 +79,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
                 Task task = FromString.taskFromString(line);
 
-                if (task.getType().equals(Type.EPIC)) {
+                if (task.getType().equals(TypeOfTasksForDirectoryTask.EPIC)) {
                     backedManager.allEpics.put(task.getId(), (Epic) task);
-                } else if (task.getType().equals(Type.SUBTASK)) {
+                } else if (task.getType().equals(TypeOfTasksForDirectoryTask.SUBTASK)) {
                     backedManager.allSubtasks.put(task.getId(), (Subtask) task);
                     if (backedManager.allEpics.containsKey(((Subtask) task).getEpicId())) {
                         backedManager.allSubtasks.put(task.getId(), (Subtask) task);

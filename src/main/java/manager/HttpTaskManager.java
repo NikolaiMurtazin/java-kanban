@@ -24,10 +24,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     @Override
     public void save() {
-        taskClient.put("task", gson.toJson(allTasks.values()));
-        taskClient.put("epic", gson.toJson(allEpics.values()));
-        taskClient.put("subtask", gson.toJson(allSubtasks.values()));
-        taskClient.put("tasks", gson.toJson(getPrioritizedTasks()));
+        taskClient.put("tasks", gson.toJson(allTasks.values()));
+        taskClient.put("epics", gson.toJson(allEpics.values()));
+        taskClient.put("subtasks", gson.toJson(allSubtasks.values()));
         List<Integer> historyIds = getHistory()
                 .stream()
                 .map(Task::getId)
@@ -36,9 +35,9 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     public void loadFromServer() {
-        loadTasks("task");
-        loadTasks("epic");
-        loadTasks("subtask");
+        loadTasks("tasks");
+        loadTasks("epics");
+        loadTasks("subtasks");
         loadHistory();
     }
 
@@ -50,16 +49,16 @@ public class HttpTaskManager extends FileBackedTasksManager {
             Epic epic;
             Subtask subtask;
             switch (key) {
-                case "task":
+                case "tasks":
                     task = gson.fromJson(element.getAsJsonObject(), Task.class);
                     allTasks.put(task.getId(), task);
                     addTaskToPrioritizedList(task);
                     break;
-                case "epic":
+                case "epics":
                     epic = gson.fromJson(element.getAsJsonObject(), Epic.class);
                     allEpics.put(epic.getId(), epic);
                     break;
-                case "subtask":
+                case "subtasks":
                     subtask = gson.fromJson(element.getAsJsonObject(), Subtask.class);
                     allSubtasks.put(subtask.getId(), subtask);
                     addTaskToPrioritizedList(subtask);

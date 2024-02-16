@@ -143,32 +143,24 @@ public class HttpTaskServer {
 
         private void handleGetPrioritized(HttpExchange exchange) throws IOException {
             Collection<Task> prioritized = manager.getPrioritizedTasks();
-            if (prioritized.isEmpty()) {
-                writeResponse(exchange, "Список приоритетных задач пуст", 404);
-                return;
-            }
             writeResponse(exchange, gson.toJson(prioritized), 200);
         }
 
         private void handleGetById(HttpExchange exchange, String[] urlParts) throws IOException {
             Optional<Integer> optionalId = getTaskId(urlParts);
             if (optionalId.isEmpty()) {
-                writeResponse(exchange, "Неверный идентификатор задачи", 400);
+                writeResponse(exchange, "Неверный id", 400);
                 return;
             }
             int id = optionalId.get();
             if (urlParts.length == 4 && urlParts[2].equals("task")) {
-                try {
-                    writeResponse(exchange, gson.toJson(manager.getTaskById(id)), 200);
-                } catch (NoSuchElementException e) {
-                    writeResponse(exchange, e.getMessage(), 404);
-                }
+                writeResponse(exchange, gson.toJson(manager.getTaskById(id)), 200);
+            } else if (urlParts.length == 4 && urlParts[2].equals("epic")) {
+                writeResponse(exchange, gson.toJson(manager.getEpicById(id)), 200);
+            } else if (urlParts.length == 4 && urlParts[2].equals("subtask")) {
+                writeResponse(exchange, gson.toJson(manager.getSubtaskById(id)), 200);
             } else if (urlParts.length == 5 && urlParts[2].equals("subtask") && urlParts[3].equals("epic")) {
-                try {
-                    writeResponse(exchange, gson.toJson(manager.getSubtasksByEpic(id)), 200);
-                } catch (NoSuchElementException e) {
-                    writeResponse(exchange, e.getMessage(), 404);
-                }
+                writeResponse(exchange, gson.toJson(manager.getSubtasksByEpic(id)), 200);
             } else {
                 writeResponse(exchange, "Неверный запрос", 400);
             }
@@ -231,24 +223,39 @@ public class HttpTaskServer {
                 return;
             }
             int id = optionalId.get();
-            if (urlParts[2].equals("task")) {
-                try {
-                    manager.deleteTask(id);
-                    writeResponse(exchange, "Task был удален", 200);
-                } catch (NoSuchElementException e) {
-                    writeResponse(exchange, e.getMessage(), 404);
-                }
-            } else {
-                writeResponse(exchange, "Неверный запрос", 400);
+            switch (urlParts[2]) {
+                case "task":
+                    try {
+                        manager.deleteTask(id);
+                        writeResponse(exchange, "Task был удален", 200);
+                    } catch (NoSuchElementException e) {
+                        writeResponse(exchange, e.getMessage(), 404);
+                    }
+                    break;
+                case "epic":
+                    try {
+                        manager.deleteEpic(id);
+                        writeResponse(exchange, "Epic был удален", 200);
+                    } catch (NoSuchElementException e) {
+                        writeResponse(exchange, e.getMessage(), 404);
+                    }
+                    break;
+                case "subtask":
+                    try {
+                        manager.deleteTask(id);
+                        writeResponse(exchange, "Subtask был удален", 200);
+                    } catch (NoSuchElementException e) {
+                        writeResponse(exchange, e.getMessage(), 404);
+                    }
+                    break;
+                default:
+                    writeResponse(exchange, "Неверный запрос", 400);
+                    break;
             }
         }
 
         private void handleGetHistory(HttpExchange exchange) throws IOException {
             Collection<Task> history = manager.getHistory();
-            if (history.isEmpty()) {
-                writeResponse(exchange, "История пуста", 404);
-                return;
-            }
             List<Integer> historyIds = history
                     .stream()
                     .map(Task::getId)

@@ -1,7 +1,7 @@
 package task;
 
-import utils.Status;
-import utils.Type;
+import utils.TaskStatus;
+import utils.TypeOfTasksForDirectoryTask;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -13,16 +13,16 @@ public class Subtask extends Task {
     public Subtask(String title, String description, Integer epicId) {
         super(title, description);
         this.epicId = epicId;
-        type = Type.SUBTASK;
+        type = TypeOfTasksForDirectoryTask.SUBTASK;
     }
 
     public Subtask(String title, String description, Integer epicId, LocalDateTime startTime, long duration) {
         super(title, description, startTime, duration);
         this.epicId = epicId;
-        type = Type.SUBTASK;
+        type = TypeOfTasksForDirectoryTask.SUBTASK;
     }
 
-    public Subtask(Integer id, Type type, String title, String description, Status status,
+    public Subtask(Integer id, TypeOfTasksForDirectoryTask type, String title, String description, TaskStatus status,
                    LocalDateTime startTime, long duration, Integer epicId) {
         super(id, type, title, description, status, startTime, duration);
         this.epicId = epicId;

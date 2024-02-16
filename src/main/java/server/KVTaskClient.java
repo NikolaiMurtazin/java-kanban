@@ -1,5 +1,7 @@
 package server;
 
+import exceptions.ManagerSaveException;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -24,7 +26,7 @@ public class KVTaskClient {
         try {
             response = client.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            System.out.println("Возникла проблема\n" +
+            throw new ManagerSaveException("Возникла проблема\n" +
                     "Проверьте адрес и повторите попытку");
         }
         apiToken = response.body();
@@ -44,7 +46,7 @@ public class KVTaskClient {
                 System.out.println("Что-то пошло не так. Код состояния: " + response.statusCode());
             }
         } catch (IOException | InterruptedException e) {
-            System.out.println("Возникла проблема\n" +
+            throw new ManagerSaveException("Возникла проблема\n" +
                     "Проверьте адрес и повторите попытку");
         }
     }
@@ -64,8 +66,8 @@ public class KVTaskClient {
             }
             return response.body();
         } catch (IOException | InterruptedException e) {
-            return "Возникла проблема\n" +
-                    "Проверьте адрес и повторите попытку";
+            throw new ManagerSaveException("Возникла проблема\n" +
+                    "Проверьте адрес и повторите попытку");
         }
     }
 }
