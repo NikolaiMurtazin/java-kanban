@@ -1,55 +1,100 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Реализация интерфейса {@link HistoryManager}, которая хранит историю
- * просмотренных задач в оперативной памяти с использованием {@link ArrayList}.
- * Текущая реализация допускает дублирование задач в истории
- * и ограничивает её размер до {@code MAX_HISTORY_SIZE}.
+ * In-memory implementation of {@link HistoryManager} using a custom doubly-linked list and HashMap.
+ * Maintains task view history in order of last access, without duplicates.
+ * All operations run in O(1) time.
+ * <p>Not thread-safe.</p>
  */
 public class InMemoryHistoryManager implements HistoryManager {
 
-    // Максимальное количество задач, которое может храниться в истории.
-    private static final int MAX_HISTORY_SIZE = 10;
-    // Список для хранения просмотренных задач.
-    private final List<Task> history;
+    /** Maps task ID to its node in the linked list. */
+    private final Map<Integer, Node> history = new HashMap<>();
+    /** Head (oldest) node in the linked list. */
+    private Node head;
+    /** Tail (most recent) node in the linked list. */
+    private Node tail;
 
-    /**
-     * Конструктор по умолчанию для {@code InMemoryHistoryManager}.
-     * Инициализирует пустой список для хранения истории.
-     */
-    public InMemoryHistoryManager() {
-        this.history = new ArrayList<>();
-    }
-
-    /**
-     * {@inheritDoc}
-     * Если размер истории достигает {@code MAX_HISTORY_SIZE},
-     * самая старая задача (первый элемент) удаляется перед добавлением новой.
-     * Дублирование задач в истории разрешено в данной реализации.
-     * Если переданная задача {@code null}, она не будет добавлена.
-     */
     @Override
     public void add(Task task) {
-        if (task == null) {
-            return; // Не добавляем null в историю
+        if (task == null) return;
+        int id = task.getId();
+        Node existing = history.remove(id);
+        if (existing != null) {
+            removeNode(existing);
         }
-        if (history.size() >= MAX_HISTORY_SIZE) {
-            history.removeFirst(); // Удаляем самый старый элемент (первый в списке)
+        linkLast(task);
+    }
+
+    @Override
+    public void remove(int id) {
+        Node node = history.remove(id);
+        if (node != null) {
+            removeNode(node);
         }
-        history.add(task); // Добавляем новую задачу в конец списка
+    }
+
+    @Override
+    public List<Task> getHistory() {
+        List<Task> result = new ArrayList<>();
+        Node current = head;
+        while (current != null) {
+            result.add(current.task);
+            current = current.next;
+        }
+        return result;
     }
 
     /**
-     * {@inheritDoc}
-     * Возвращает копию списка текущей истории просмотров,
-     * чтобы предотвратить её внешнее изменение.
-     * Важно: копирование происходит в новый {@link ArrayList},
-     * но объекты {@link Task} внутри списка остаются теми же ссылками.
+     * Appends the given task to the end of the list and updates the map.
+     *
+     * @param task task to add
      */
-    @Override
-    public List<Task> getHistory() {
-        // Возвращаем копию для защиты от внешних изменений
-        return new ArrayList<>(history);
+    private void linkLast(Task task) {
+        Node newNode = new Node(tail, task, null);
+        if (tail != null) {
+            tail.next = newNode;
+        } else {
+            head = newNode;
+        }
+        tail = newNode;
+        history.put(task.getId(), newNode);
+    }
+
+    /**
+     * Removes the given node from the linked list.
+     * Map cleanup is done by the caller.
+     *
+     * @param node node to remove
+     */
+    private void removeNode(Node node) {
+        if (node.prev != null) {
+            node.prev.next = node.next;
+        } else {
+            head = node.next;
+        }
+        if (node.next != null) {
+            node.next.prev = node.prev;
+        } else {
+            tail = node.prev;
+        }
+    }
+
+    /**
+     * Node for doubly-linked list storage of history.
+     */
+    private static class Node {
+        Task task;
+        Node prev;
+        Node next;
+
+        Node(Node prev, Task task, Node next) {
+            this.prev = prev;
+            this.task = task;
+            this.next = next;
+        }
     }
 }

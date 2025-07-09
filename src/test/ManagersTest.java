@@ -3,57 +3,53 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+/**
+ * Unit tests for the {@link Managers} utility class.
+ */
 class ManagersTest {
 
     /**
-     * Убедитесь, что утилитарный класс всегда возвращает проинициализированные
-     * и готовые к работе экземпляры менеджеров.
-     * Проверяем, что getDefault() возвращает не null объект.
+     * Should always return a non-null initialized TaskManager instance.
      */
     @Test
     void getDefaultShouldReturnInitializedTaskManager() {
         TaskManager manager = Managers.getDefault();
-        Assertions.assertNotNull(manager, "getDefault() должен возвращать не null TaskManager.");
-        // Дополнительная проверка, что менеджер готов к работе (например, списки задач не null)
-        Assertions.assertNotNull(manager.getAllTasks(), "Список задач не должен быть null.");
+        Assertions.assertNotNull(manager);
+        Assertions.assertNotNull(manager.getAllTasks());
     }
 
     /**
-     * Убедитесь, что утилитарный класс всегда возвращает проинициализированные
-     * и готовые к работе экземпляры менеджеров.
-     * Проверяем, что getDefaultHistory() возвращает не null объект.
+     * Should always return a non-null initialized HistoryManager instance.
      */
     @Test
     void getDefaultHistoryShouldReturnInitializedHistoryManager() {
         HistoryManager historyManager = Managers.getDefaultHistory();
-        Assertions.assertNotNull(historyManager, "getDefaultHistory() должен возвращать не null HistoryManager.");
-        // Дополнительная проверка, что менеджер истории готов к работе
-        Assertions.assertNotNull(historyManager.getHistory(), "История не должна быть null.");
+        Assertions.assertNotNull(historyManager);
+        Assertions.assertNotNull(historyManager.getHistory());
     }
 
     /**
-     * Проверяем, что getDefault() всегда возвращает один и тот же экземпляр TaskManager (синглтон).
+     * getDefault() should always return the same TaskManager instance (singleton).
      */
     @Test
     void getDefaultShouldReturnSameInstance() {
         TaskManager manager1 = Managers.getDefault();
         TaskManager manager2 = Managers.getDefault();
-        Assertions.assertSame(manager1, manager2, "getDefault() должен возвращать один и тот же экземпляр TaskManager.");
+        Assertions.assertSame(manager1, manager2);
     }
 
     /**
-     * Проверяем, что getDefaultHistory() всегда возвращает один и тот же экземпляр HistoryManager (синглтон).
+     * getDefaultHistory() should always return the same HistoryManager instance (singleton).
      */
     @Test
     void getDefaultHistoryShouldReturnSameInstance() {
         HistoryManager historyManager1 = Managers.getDefaultHistory();
         HistoryManager historyManager2 = Managers.getDefaultHistory();
-        Assertions.assertSame(historyManager1, historyManager2, "getDefaultHistory() должен возвращать один и тот же экземпляр HistoryManager.");
+        Assertions.assertSame(historyManager1, historyManager2);
     }
 
     /**
-     * Проверяем, что TaskManager и HistoryManager, возвращаемые Managers,
-     * связаны и используют одну и ту же историю.
+     * TaskManager and HistoryManager returned by Managers should be connected (use the same history).
      */
     @Test
     void taskManagerAndHistoryManagerShouldBeConnected() {
@@ -61,11 +57,11 @@ class ManagersTest {
         HistoryManager historyManager = Managers.getDefaultHistory();
 
         Task task = new Task("Connected Test Task", "Desc", TaskStatus.NEW);
-        manager.createTask(task); // Создаем задачу
-        manager.getTaskById(task.getId()); // Просматриваем, чтобы она попала в историю
+        manager.createTask(task);
+        manager.getTaskById(task.getId());
 
         List<Task> history = historyManager.getHistory();
-        Assertions.assertFalse(history.isEmpty(), "История не должна быть пустой, если TaskManager добавляет в нее задачи.");
-        Assertions.assertEquals(task.getId(), history.getLast().getId(), "Последняя добавленная задача должна быть в истории.");
+        Assertions.assertFalse(history.isEmpty());
+        Assertions.assertEquals(task.getId(), history.getLast().getId());
     }
 }

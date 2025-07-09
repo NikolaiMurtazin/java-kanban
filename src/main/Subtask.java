@@ -1,20 +1,17 @@
 /**
- * Класс для представления подзадачи. Подзадача является частью одного конкретного эпика.
- * Наследуется от базового класса {@link Task}.
+ * Represents a subtask belonging to a specific {@link Epic}.
  */
 public class Subtask extends Task {
-    // Уникальный идентификатор эпика, к которому относится эта подзадача.
+    /** ID of the parent epic for this subtask. */
     private final int epicId;
 
     /**
-     * Конструктор для создания новой подзадачи.
-     * Статус подзадачи может быть задан при создании.
-     * Подзадача должна быть связана с существующим эпиком через его ID.
+     * Creates a new subtask with the given parameters.
      *
-     * @param name        Название подзадачи.
-     * @param description Описание подзадачи.
-     * @param status      Начальный статус подзадачи.
-     * @param epicId      Уникальный идентификатор родительского эпика, к которому относится эта подзадача.
+     * @param name        subtask name
+     * @param description subtask description
+     * @param status      initial status
+     * @param epicId      ID of the parent epic
      */
     public Subtask(String name, String description, TaskStatus status, int epicId) {
         super(name, description, status);
@@ -22,21 +19,14 @@ public class Subtask extends Task {
     }
 
     /**
-     * Получает уникальный идентификатор эпика, к которому относится эта подзадача.
+     * Returns the ID of the parent epic for this subtask.
      *
-     * @return ID родительского эпика.
+     * @return epic ID
      */
     public int getEpicId() {
         return epicId;
     }
 
-    /**
-     * Возвращает строковое представление объекта подзадачи.
-     * Включает информацию из базового класса {@link Task}
-     * и идентификатор родительского эпика.
-     *
-     * @return Форматированная строка с данными о подзадаче.
-     */
     @Override
     public String toString() {
         return "Subtask{" +
@@ -48,3 +38,5 @@ public class Subtask extends Task {
                 '}';
     }
 }
+
+
