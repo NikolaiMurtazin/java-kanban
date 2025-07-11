@@ -1,161 +1,146 @@
 import java.util.List;
 
 /**
- * Интерфейс, определяющий контракт для любого менеджера задач.
- * Предоставляет методы для управления задачами, эпиками и подзадачами:
- * создание, получение, обновление, удаление (CRUD-операции),
- * а также дополнительные функции, такие как получение подзадач эпика.
- * Любой класс, реализующий этот интерфейс, должен предоставить
- * собственную логику для хранения и обработки задач.
+ * Contract for a task manager. Provides CRUD operations for tasks, epics, and subtasks,
+ * as well as retrieval of all items by type and subtask lookup for epics.
  */
 public interface TaskManager {
+    // --- Task methods ---
+
     /**
-     * Возвращает список всех обычных задач.
-     *
-     * @return Список объектов {@link Task}.
+     * Returns all regular tasks.
      */
     List<Task> getAllTasks();
 
     /**
-     * Удаляет все обычные задачи из хранилища.
+     * Removes all regular tasks.
      */
     void removeAllTasks();
 
     /**
-     * Получает обычную задачу по её уникальному идентификатору.
+     * Returns a task by its unique identifier.
      *
-     * @param id Идентификатор задачи.
-     * @return Объект {@link Task}, соответствующий указанному ID, или {@code null}, если задача не найдена.
+     * @param id the task ID
+     * @return the task or null if not found
      */
     Task getTaskById(int id);
 
     /**
-     * Создаёт новую обычную задачу.
-     * Менеджер задач присваивает уникальный ID и сохраняет задачу.
+     * Creates a new task, assigning it a unique ID.
      *
-     * @param task Объект {@link Task} для создания.
-     * @return Созданная задача с присвоенным ID.
+     * @param task the task to create
+     * @return the created task with assigned ID
      */
     Task createTask(Task task);
 
     /**
-     * Обновляет существующую обычную задачу.
-     * Задача для обновления идентифицируется по её ID.
+     * Updates an existing task by ID.
      *
-     * @param task Объект {@link Task} с обновлёнными данными и корректным ID.
+     * @param task the task with updated data
      */
     void updateTask(Task task);
 
     /**
-     * Удаляет обычную задачу по её идентификатору.
+     * Deletes a task by ID.
      *
-     * @param id Идентификатор задачи для удаления.
+     * @param id the task ID
      */
     void deleteTaskById(int id);
 
+    // --- Epic methods ---
+
     /**
-     * Возвращает список всех эпиков.
-     *
-     * @return Список объектов {@link Epic}.
+     * Returns all epics.
      */
     List<Epic> getAllEpics();
 
     /**
-     * Удаляет все эпики из хранилища.
-     * При удалении эпиков также удаляются все подзадачи, которые были связаны с удаленными эпиками.
+     * Removes all epics (and all their subtasks).
      */
     void removeAllEpics();
 
     /**
-     * Получает эпик по его уникальному идентификатору.
+     * Returns an epic by ID.
      *
-     * @param id Идентификатор эпика.
-     * @return Объект {@link Epic}, соответствующий указанному ID, или {@code null}, если эпик не найден.
+     * @param id the epic ID
+     * @return the epic or null if not found
      */
     Epic getEpicById(int id);
 
     /**
-     * Создаёт новый эпик.
-     * Менеджер задач присваивает уникальный ID и сохраняет эпик.
-     * Статус эпика автоматически рассчитывается менеджером.
+     * Creates a new epic, assigning it a unique ID.
      *
-     * @param epic Объект {@link Epic} для создания.
-     * @return Созданный эпик с присвоенным ID.
+     * @param epic the epic to create
+     * @return the created epic
      */
     Epic createEpic(Epic epic);
 
     /**
-     * Обновляет существующий эпик.
-     * Эпик для обновления идентифицируется по его ID.
-     * Обновляются только название и описание эпика; список подзадач и статус управляются менеджером.
+     * Updates an existing epic's name and description by ID.
+     * Subtasks and status are managed internally.
      *
-     * @param epic Объект {@link Epic} с обновлёнными данными и корректным ID.
+     * @param epic the epic with updated data
      */
     void updateEpic(Epic epic);
 
     /**
-     * Удаляет эпик по его идентификатору.
-     * Также удаляет все подзадачи, которые были связаны с этим эпиком.
+     * Deletes an epic by ID and all its subtasks.
      *
-     * @param id Идентификатор эпика для удаления.
-     * @return Удаленный объект {@link Epic}, или {@code null}, если эпик не найден.
+     * @param id the epic ID
+     * @return the deleted epic or null if not found
      */
     Epic deleteEpicById(int id);
 
+    // --- Subtask methods ---
+
     /**
-     * Возвращает список всех подзадач.
-     *
-     * @return Список объектов {@link Subtask}.
+     * Returns all subtasks.
      */
     List<Subtask> getAllSubtasks();
 
     /**
-     * Удаляет все подзадачи из хранилища.
-     * После удаления всех подзадач статусы соответствующих родительских эпиков обновляются.
+     * Removes all subtasks (and updates affected epics).
      */
     void removeAllSubtasks();
 
     /**
-     * Получает подзадачу по её уникальному идентификатору.
+     * Returns a subtask by ID.
      *
-     * @param id Идентификатор подзадачи.
-     * @return Объект {@link Subtask}, соответствующий указанному ID, или {@code null}, если подзадача не найдена.
+     * @param id the subtask ID
+     * @return the subtask or null if not found
      */
     Subtask getSubtaskById(int id);
 
     /**
-     * Создаёт новую подзадачу.
-     * Подзадаче присваивается уникальный ID. Она связывается с указанным эпиком.
-     * Статус родительского эпика обновляется.
+     * Creates a new subtask for the specified epic.
+     * Assigns it a unique ID and updates the parent epic's status.
      *
-     * @param subtask Объект {@link Subtask} для создания. ID эпика должен быть корректным.
-     * @return Созданная подзадача с присвоенным ID или {@code null}, если родительский эпик не найден.
+     * @param subtask the subtask to create
+     * @return the created subtask or null if parent epic not found
      */
     Subtask createSubtask(Subtask subtask);
 
     /**
-     * Обновляет существующую подзадачу.
-     * Подзадача для обновления идентифицируется по ID внутри объекта subtask.
-     * Если ID родительского эпика изменился, подзадача перепривязывается.
-     * Статусы затронутых эпиков обновляются.
+     * Updates an existing subtask by ID.
+     * If the epic reference changes, re-binds it.
+     * Updates the status of affected epics.
      *
-     * @param subtask Объект {@link Subtask} с обновлёнными данными и корректным ID.
+     * @param subtask the subtask with updated data
      */
     void updateSubtask(Subtask subtask);
 
     /**
-     * Удаляет подзадачу по её идентификатору.
-     * Статус родительского эпика обновляется.
+     * Deletes a subtask by ID and updates the parent epic's status.
      *
-     * @param id Идентификатор подзадачи для удаления.
+     * @param id the subtask ID
      */
     void deleteSubtaskById(int id);
 
     /**
-     * Получает список всех подзадач указанного эпика.
+     * Returns all subtasks of the given epic.
      *
-     * @param epicId Идентификатор эпика, подзадачи которого нужно получить.
-     * @return Список подзадач ({@link Subtask}) для данного эпика или пустой список, если эпик не найден или у него нет подзадач.
+     * @param epicId the epic ID
+     * @return list of subtasks (empty if epic not found or has no subtasks)
      */
     List<Subtask> getEpicSubtasks(int epicId);
 }

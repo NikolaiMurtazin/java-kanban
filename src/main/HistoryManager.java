@@ -1,26 +1,28 @@
 import java.util.List;
 
 /**
- * Интерфейс для управления историей просмотренных задач.
- * Определяет методы для добавления задач в историю и получения всей истории.
+ * Interface for managing the history of viewed tasks.
  */
 public interface HistoryManager {
-
     /**
-     * Добавляет задачу в историю просмотров.
-     * Каждая задача ({@link Task}, {@link Epic}, {@link Subtask}),
-     * полученная через менеджер задач (например, {@code getTaskById}),
-     * должна быть добавлена в историю.
+     * Adds a task to the view history.
      *
-     * @param task Задача, которую нужно добавить в историю. Может быть {@code null}.
+     * @param task the task to add (can be null)
      */
     void add(Task task);
 
     /**
-     * Возвращает список всех задач, которые находятся в истории просмотров.
-     * Порядок задач в списке соответствует порядку их добавления (просмотра).
+     * Removes a task from the history by its ID.
      *
-     * @return Список объектов {@link Task} из истории.
+     * @param id the task ID
+     */
+    void remove(int id);
+
+    /**
+     * Returns the history of viewed tasks in access order.
+     *
+     * @return list of viewed tasks
      */
     List<Task> getHistory();
 }
+

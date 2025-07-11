@@ -2,45 +2,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Класс для представления эпика. Эпик - это крупная задача,
- * которая может быть разбита на одну или несколько подзадач ({@link Subtask}).
- * Статус эпика зависит от статусов его подзадач и управляется {@link TaskManager}.
- * Наследуется от базового класса {@link Task}.
+ * Represents an epic task, which is a large task composed of one or more {@link Subtask} instances.
+ * The status of the epic is automatically calculated based on the statuses of its subtasks
+ * and managed by the {@link TaskManager}.
  */
 public class Epic extends Task {
-    // Список идентификаторов подзадач, входящих в этот эпик.
+    /** List of subtask IDs associated with this epic. */
     private final List<Integer> subtaskIds;
 
     /**
-     * Конструктор для создания нового эпика.
-     * Изначально эпик создается без подзадач.
-     * Его статус будет автоматически определен менеджером задач
-     * на основе статусов связанных подзадач (изначально {@link TaskStatus#NEW}).
+     * Creates a new epic task with the given name and description.
+     * The epic is initially created without subtasks; its status will be managed by the task manager.
      *
-     * @param name        Название эпика.
-     * @param description Описание эпика.
+     * @param name        the epic name
+     * @param description the epic description
      */
     public Epic(String name, String description) {
-        super(name, description); // Статус по умолчанию будет NEW, менеджер его обновит
+        super(name, description);
         this.subtaskIds = new ArrayList<>();
-        // Статус эпика управляется TaskManager, поэтому здесь он может быть NEW
-        // или будет пересчитан сразу после создания в менеджере.
     }
 
     /**
-     * Получает список идентификаторов подзадач, которые связаны с этим эпиком.
+     * Returns a copy of the list of subtask IDs associated with this epic.
      *
-     * @return Список ID подзадач.
+     * @return list of subtask IDs
      */
     public List<Integer> getSubtaskIds() {
-        return new ArrayList<>(subtaskIds); // Возвращаем копию для защиты от внешних изменений
+        return new ArrayList<>(subtaskIds);
     }
 
     /**
-     * Добавляет ID подзадачи в список подзадач эпика.
-     * Этот метод обычно вызывается менеджером задач.
+     * Adds the ID of a subtask to this epic.
      *
-     * @param subtaskId ID подзадачи для добавления.
+     * @param subtaskId the subtask ID to add
      */
     public void addSubtaskId(int subtaskId) {
         if (!subtaskIds.contains(subtaskId)) {
@@ -49,30 +43,21 @@ public class Epic extends Task {
     }
 
     /**
-     * Удаляет ID подзадачи из списка подзадач эпика.
-     * Этот метод обычно вызывается менеджером задач.
+     * Removes a subtask ID from this epic.
      *
-     * @param subtaskId ID подзадачи для удаления.
+     * @param subtaskId the subtask ID to remove
      */
     public void removeSubtaskId(Integer subtaskId) {
         subtaskIds.remove(subtaskId);
     }
 
     /**
-     * Очищает список ID подзадач эпика.
-     * Этот метод обычно вызывается менеджером задач.
+     * Removes all subtask IDs from this epic.
      */
     public void clearSubtaskIds() {
         subtaskIds.clear();
     }
 
-    /**
-     * Возвращает строковое представление объекта эпика.
-     * Включает информацию из базового класса {@link Task}
-     * и список идентификаторов связанных подзадач.
-     *
-     * @return Форматированная строка с данными об эпике.
-     */
     @Override
     public String toString() {
         return "Epic{" +

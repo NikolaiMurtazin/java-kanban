@@ -1,18 +1,12 @@
 /**
- * Перечисление статусов задач, используемых в трекере.
- * Определяет возможные этапы жизненного цикла задачи, эпика или подзадачи.
+ * Enumeration representing the status of a task.
  */
 public enum TaskStatus {
-    /**
-     * Задача только создана, но к её выполнению ещё не приступили.
-     */
+    /** Task is created but not yet started. */
     NEW,
-    /**
-     * Над задачей ведётся работа.
-     */
+    /** Task is currently in progress. */
     IN_PROGRESS,
-    /**
-     * Задача полностью выполнена.
-     */
+    /** Task is completed. */
     DONE
 }
+
