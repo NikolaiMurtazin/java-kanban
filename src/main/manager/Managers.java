@@ -1,3 +1,8 @@
+package manager;
+
+import history.HistoryManager;
+import history.InMemoryHistoryManager;
+
 /**
  * Utility class providing singleton instances of application managers:
  * {@link TaskManager} and {@link HistoryManager}.

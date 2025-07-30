@@ -1,3 +1,11 @@
+package manager;
+
+import history.HistoryManager;
+import model.Epic;
+import model.Subtask;
+import model.Task;
+import model.TaskStatus;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,7 +43,7 @@ public class InMemoryTaskManager implements TaskManager {
         return nextId++;
     }
 
-    // --- Task methods ---
+    // --- model.Task methods ---
 
     @Override
     public List<Task> getAllTasks() {
@@ -77,7 +85,7 @@ public class InMemoryTaskManager implements TaskManager {
         tasks.remove(id);
     }
 
-    // --- Epic methods ---
+    // --- model.Epic methods ---
 
     @Override
     public List<Epic> getAllEpics() {
@@ -130,7 +138,7 @@ public class InMemoryTaskManager implements TaskManager {
         return epicToRemove;
     }
 
-    // --- Subtask methods ---
+    // --- model.Subtask methods ---
 
     @Override
     public List<Subtask> getAllSubtasks() {
@@ -169,7 +177,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtask == null) return null;
         Epic parentEpic = epics.get(subtask.getEpicId());
         if (parentEpic == null) {
-            System.out.println("Error: Epic with ID " + subtask.getEpicId() + " not found.");
+            System.out.println("Error: model.Epic with ID " + subtask.getEpicId() + " not found.");
             return null;
         }
         subtask.setId(generateId());

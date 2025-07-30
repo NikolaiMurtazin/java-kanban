@@ -1,3 +1,7 @@
+package model;
+
+import exception.ManagerSaveException;
+
 import java.util.Objects;
 
 /**
@@ -5,10 +9,10 @@ import java.util.Objects;
  * Contains common attributes: name, description, unique identifier, and status.
  */
 public class Task {
-    protected String name;
-    protected String description;
-    protected int id;
-    protected TaskStatus status;
+    private int id;
+    private String name;
+    private String description;
+    private TaskStatus status;
 
     /**
      * Creates a new task with status {@link TaskStatus#NEW}.
@@ -32,6 +36,13 @@ public class Task {
      * @param status      task status
      */
     public Task(String name, String description, TaskStatus status) {
+        this.name = name;
+        this.description = description;
+        this.status = status;
+    }
+
+    public Task(int id, String name, String description, TaskStatus status) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.status = status;
@@ -83,8 +94,8 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "id=" + id +
+        return "model.Task{" +
+                "id=" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +

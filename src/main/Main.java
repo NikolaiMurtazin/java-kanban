@@ -1,3 +1,12 @@
+import history.HistoryManager;
+import history.InMemoryHistoryManager;
+import manager.InMemoryTaskManager;
+import manager.TaskManager;
+import model.Epic;
+import model.Subtask;
+import model.Task;
+import model.TaskStatus;
+
 public class Main {
     public static void main(String[] args) {
         // 1. Setup managers
@@ -5,17 +14,17 @@ public class Main {
         TaskManager taskManager = new InMemoryTaskManager(historyManager);
 
         // 2. Create two regular tasks
-        Task task1 = taskManager.createTask(new Task("Task 1", "Simple task 1"));
-        Task task2 = taskManager.createTask(new Task("Task 2", "Simple task 2"));
+        Task task1 = taskManager.createTask(new Task("model.Task 1", "Simple task 1"));
+        Task task2 = taskManager.createTask(new Task("model.Task 2", "Simple task 2"));
 
         // 3. Create an epic with three subtasks
-        Epic epicWithSubtasks = taskManager.createEpic(new Epic("Epic 1", "Epic with subtasks"));
-        Subtask sub1 = taskManager.createSubtask(new Subtask("Subtask 1", "Subtask 1", TaskStatus.NEW, epicWithSubtasks.getId()));
-        Subtask sub2 = taskManager.createSubtask(new Subtask("Subtask 2", "Subtask 2", TaskStatus.NEW, epicWithSubtasks.getId()));
-        Subtask sub3 = taskManager.createSubtask(new Subtask("Subtask 3", "Subtask 3", TaskStatus.NEW, epicWithSubtasks.getId()));
+        Epic epicWithSubtasks = taskManager.createEpic(new Epic("model.Epic 1", "model.Epic with subtasks"));
+        Subtask sub1 = taskManager.createSubtask(new Subtask("model.Subtask 1", "model.Subtask 1", TaskStatus.NEW, epicWithSubtasks.getId()));
+        Subtask sub2 = taskManager.createSubtask(new Subtask("model.Subtask 2", "model.Subtask 2", TaskStatus.NEW, epicWithSubtasks.getId()));
+        Subtask sub3 = taskManager.createSubtask(new Subtask("model.Subtask 3", "model.Subtask 3", TaskStatus.NEW, epicWithSubtasks.getId()));
 
         // 4. Create an epic without subtasks
-        Epic epicWithoutSubtasks = taskManager.createEpic(new Epic("Epic 2", "Epic without subtasks"));
+        Epic epicWithoutSubtasks = taskManager.createEpic(new Epic("model.Epic 2", "model.Epic without subtasks"));
 
         // 5. Simulate user viewing tasks in different orders
         // View task1, epicWithSubtasks, sub1

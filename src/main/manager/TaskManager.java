@@ -1,3 +1,9 @@
+package manager;
+
+import model.Epic;
+import model.Subtask;
+import model.Task;
+
 import java.util.List;
 
 /**
@@ -5,7 +11,7 @@ import java.util.List;
  * as well as retrieval of all items by type and subtask lookup for epics.
  */
 public interface TaskManager {
-    // --- Task methods ---
+    // --- model.Task methods ---
 
     /**
      * Returns all regular tasks.
@@ -47,7 +53,7 @@ public interface TaskManager {
      */
     void deleteTaskById(int id);
 
-    // --- Epic methods ---
+    // --- model.Epic methods ---
 
     /**
      * Returns all epics.
@@ -91,7 +97,7 @@ public interface TaskManager {
      */
     Epic deleteEpicById(int id);
 
-    // --- Subtask methods ---
+    // --- model.Subtask methods ---
 
     /**
      * Returns all subtasks.

@@ -1,3 +1,11 @@
+import history.HistoryManager;
+import manager.InMemoryTaskManager;
+import manager.Managers;
+import manager.TaskManager;
+import model.Epic;
+import model.Subtask;
+import model.Task;
+import model.TaskStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,9 +33,9 @@ class InMemoryTaskManagerTest {
      */
     @Test
     void shouldAddTasksAndFindThemById() {
-        Task task = taskManager.createTask(new Task("Test Task", "Desc Task", TaskStatus.NEW));
-        Epic epic = taskManager.createEpic(new Epic("Test Epic", "Desc Epic"));
-        Subtask subtask = taskManager.createSubtask(new Subtask("Test Subtask", "Desc Subtask", TaskStatus.NEW, epic.getId()));
+        Task task = taskManager.createTask(new Task("Test model.Task", "Desc model.Task", TaskStatus.NEW));
+        Epic epic = taskManager.createEpic(new Epic("Test model.Epic", "Desc model.Epic"));
+        Subtask subtask = taskManager.createSubtask(new Subtask("Test model.Subtask", "Desc model.Subtask", TaskStatus.NEW, epic.getId()));
 
         Assertions.assertNotNull(task);
         Assertions.assertNotNull(epic);
@@ -47,9 +55,9 @@ class InMemoryTaskManagerTest {
      */
     @Test
     void generatedAndAssignedIdsShouldNotConflict() {
-        Task task1 = taskManager.createTask(new Task("Task 1", "Desc 1", TaskStatus.NEW));
-        Task task2 = taskManager.createTask(new Task("Task 2", "Desc 2", TaskStatus.NEW));
-        Task task3 = taskManager.createTask(new Task("Task 3", "Desc 3", TaskStatus.NEW));
+        Task task1 = taskManager.createTask(new Task("model.Task 1", "Desc 1", TaskStatus.NEW));
+        Task task2 = taskManager.createTask(new Task("model.Task 2", "Desc 2", TaskStatus.NEW));
+        Task task3 = taskManager.createTask(new Task("model.Task 3", "Desc 3", TaskStatus.NEW));
         Assertions.assertTrue(task3.getId() > task2.getId());
         Assertions.assertNotNull(taskManager.getTaskById(task3.getId()));
     }
@@ -59,7 +67,7 @@ class InMemoryTaskManagerTest {
      */
     @Test
     void taskShouldBeImmutableAfterAddingToManager() {
-        Task originalTask = new Task("Original Task", "Original Description", TaskStatus.NEW);
+        Task originalTask = new Task("Original model.Task", "Original Description", TaskStatus.NEW);
         Task createdTask = taskManager.createTask(originalTask);
         Assertions.assertNotNull(createdTask);
         Assertions.assertTrue(createdTask.getId() > 0);
@@ -75,31 +83,31 @@ class InMemoryTaskManagerTest {
     }
 
     /**
-     * Epic cannot be added as its own subtask (by design).
+     * model.Epic cannot be added as its own subtask (by design).
      */
     @Test
     void epicCannotBeAddedAsItsOwnSubtask() {
-        Epic epic = taskManager.createEpic(new Epic("Self-referencing Epic", "Should not allow"));
-        Subtask invalidSubtask = new Subtask("Invalid Subtask", "Should not be added", TaskStatus.NEW, epic.getId());
+        Epic epic = taskManager.createEpic(new Epic("Self-referencing model.Epic", "Should not allow"));
+        Subtask invalidSubtask = new Subtask("Invalid model.Subtask", "Should not be added", TaskStatus.NEW, epic.getId());
         Subtask createdInvalidSubtask = taskManager.createSubtask(invalidSubtask);
         Assertions.assertNotNull(createdInvalidSubtask);
     }
 
     /**
-     * Subtask cannot be its own epic (by design).
+     * model.Subtask cannot be its own epic (by design).
      */
     @Test
     void subtaskCannotBeItsOwnEpic() {
-        Epic epic = taskManager.createEpic(new Epic("Epic for Subtask", "Desc"));
-        Subtask subtask = taskManager.createSubtask(new Subtask("The Subtask", "Desc", TaskStatus.NEW, epic.getId()));
+        Epic epic = taskManager.createEpic(new Epic("model.Epic for model.Subtask", "Desc"));
+        Subtask subtask = taskManager.createSubtask(new Subtask("The model.Subtask", "Desc", TaskStatus.NEW, epic.getId()));
     }
 
     /**
-     * Epic status should be correctly calculated from subtask statuses.
+     * model.Epic status should be correctly calculated from subtask statuses.
      */
     @Test
     void epicStatusShouldBeCalculatedCorrectly() {
-        Epic epic = taskManager.createEpic(new Epic("Status Test Epic", ""));
+        Epic epic = taskManager.createEpic(new Epic("Status Test model.Epic", ""));
         Subtask sub1 = taskManager.createSubtask(new Subtask("Sub1", "", TaskStatus.NEW, epic.getId()));
         Subtask sub2 = taskManager.createSubtask(new Subtask("Sub2", "", TaskStatus.NEW, epic.getId()));
 

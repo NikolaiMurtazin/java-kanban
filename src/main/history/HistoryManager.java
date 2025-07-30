@@ -1,3 +1,7 @@
+package history;
+
+import model.Task;
+
 import java.util.List;
 
 /**

@@ -1,3 +1,7 @@
+import model.Epic;
+import model.Subtask;
+import model.Task;
+import model.TaskStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,24 +19,24 @@ class TaskTest {
 
     @BeforeEach
     void setUp() {
-        task1 = new Task("Task 1", "Description 1");
+        task1 = new Task("model.Task 1", "Description 1");
         task1.setId(1);
 
-        task2 = new Task("Task 2", "Description 2", TaskStatus.IN_PROGRESS);
+        task2 = new Task("model.Task 2", "Description 2", TaskStatus.IN_PROGRESS);
         task2.setId(1);
 
-        task3 = new Task("Task 3", "Description 3");
+        task3 = new Task("model.Task 3", "Description 3");
         task3.setId(2);
 
-        epic1 = new Epic("Epic 1", "Epic Description");
+        epic1 = new Epic("model.Epic 1", "model.Epic Description");
         epic1.setId(1);
 
-        subtask1 = new Subtask("Subtask 1", "Sub Description", TaskStatus.NEW, 100);
+        subtask1 = new Subtask("model.Subtask 1", "Sub Description", TaskStatus.NEW, 100);
         subtask1.setId(1);
     }
 
     /**
-     * Two Task instances with the same ID should be equal.
+     * Two model.Task instances with the same ID should be equal.
      */
     @Test
     void tasksWithSameIdShouldBeEqual() {
@@ -64,7 +68,7 @@ class TaskTest {
     }
 
     /**
-     * Task, Epic, and Subtask with the same ID should be considered equal.
+     * model.Task, model.Epic, and model.Subtask with the same ID should be considered equal.
      */
     @Test
     void subclassesOfTaskWithSameIdShouldBeEqual() {
@@ -78,7 +82,7 @@ class TaskTest {
      */
     @Test
     void toStringShouldReturnCorrectRepresentation() {
-        String expected = "Task{id=1, name='Task 1', description='Description 1', status=NEW}";
+        String expected = "model.Task{id=1, name='model.Task 1', description='Description 1', status=NEW}";
         Assertions.assertEquals(expected, task1.toString());
     }
 }
