@@ -13,23 +13,31 @@ import java.util.Map;
 
 /**
  * In-memory implementation of {@link TaskManager}.
- * Stores all tasks, epics, and subtasks in memory using hash maps.
- * Handles task lifecycle and IDs, automatically recalculates epic status,
- * and integrates with a {@link HistoryManager} for task view history.
+ * Stores all tasks, epics, and subtasks using internal maps.
+ * Automatically manages task IDs and epic status updates.
+ * Integrates with a {@link HistoryManager} for tracking recently viewed tasks.
  */
 public class InMemoryTaskManager implements TaskManager {
 
+    /** Stores regular tasks by ID. */
     private final Map<Integer, Task> tasks;
+
+    /** Stores epics by ID. */
     private final Map<Integer, Epic> epics;
+
+    /** Stores subtasks by ID. */
     private final Map<Integer, Subtask> subtasks;
+
+    /** Counter for generating unique task IDs. */
     private int nextId;
 
+    /** Reference to the history manager for task view tracking. */
     private final HistoryManager historyManager;
 
     /**
-     * Creates an in-memory task manager with the given history manager.
+     * Constructs a new in-memory task manager.
      *
-     * @param historyManager the history manager to use
+     * @param historyManager the history manager to integrate
      */
     public InMemoryTaskManager(HistoryManager historyManager) {
         this.tasks = new HashMap<>();
@@ -39,8 +47,50 @@ public class InMemoryTaskManager implements TaskManager {
         this.historyManager = historyManager;
     }
 
+    /**
+     * Generates a new unique ID for a task, epic, or subtask.
+     *
+     * @return next available ID
+     */
     private int generateId() {
         return nextId++;
+    }
+
+    /**
+     * Allows external managers to override the ID counter.
+     * Typically used during loading from a file.
+     *
+     * @param nextId the ID to start from
+     */
+    protected void setNextId(int nextId) {
+        this.nextId = nextId;
+    }
+
+    /**
+     * Provides direct access to the internal task map (for subclasses like file-backed managers).
+     *
+     * @return map of tasks by ID
+     */
+    protected Map<Integer, Task> getTasks() {
+        return tasks;
+    }
+
+    /**
+     * Provides direct access to the internal epic map (for subclasses).
+     *
+     * @return map of epics by ID
+     */
+    protected Map<Integer, Epic> getEpics() {
+        return epics;
+    }
+
+    /**
+     * Provides direct access to the internal subtask map (for subclasses).
+     *
+     * @return map of subtasks by ID
+     */
+    protected Map<Integer, Subtask> getSubtasks() {
+        return subtasks;
     }
 
     // --- model.Task methods ---
@@ -127,7 +177,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Epic deleteEpicById(int id) {
+    public void deleteEpicById(int id) {
         Epic epicToRemove = epics.remove(id);
         if (epicToRemove != null) {
             for (Integer subtaskId : new ArrayList<>(epicToRemove.getSubtaskIds())) {
@@ -135,7 +185,6 @@ public class InMemoryTaskManager implements TaskManager {
             }
             epicToRemove.clearSubtaskIds();
         }
-        return epicToRemove;
     }
 
     // --- model.Subtask methods ---
@@ -178,10 +227,10 @@ public class InMemoryTaskManager implements TaskManager {
         Epic parentEpic = epics.get(subtask.getEpicId());
         if (parentEpic == null) {
             System.out.println("Error: model.Epic with ID " + subtask.getEpicId() + " not found.");
-            return null;
         }
         subtask.setId(generateId());
         subtasks.put(subtask.getId(), subtask);
+        assert parentEpic != null;
         parentEpic.addSubtaskId(subtask.getId());
         updateEpicStatus(parentEpic);
         return subtask;
@@ -200,8 +249,7 @@ public class InMemoryTaskManager implements TaskManager {
         Epic newParentEpic = epics.get(subtask.getEpicId());
 
         if (newParentEpic == null) {
-            System.out.println("Error: New parent epic with ID " + subtask.getEpicId() + " not found.");
-            return;
+            throw new IllegalArgumentException("New parent epic with ID " + subtask.getEpicId() + " not found.");
         }
 
         if (oldSubtask.getEpicId() != subtask.getEpicId()) {
@@ -247,9 +295,16 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     /**
-     * Updates the status of the given epic based on its subtasks.
+     * Recalculates the status of the given epic based on the statuses of its subtasks.
+     * Rules:
+     * <ul>
+     *     <li>If all subtasks are NEW → epic is NEW</li>
+     *     <li>If all subtasks are DONE → epic is DONE</li>
+     *     <li>If mixed or IN_PROGRESS subtasks → epic is IN_PROGRESS</li>
+     *     <li>If no subtasks → epic is NEW</li>
+     * </ul>
      *
-     * @param epic the epic to update
+     * @param epic the epic whose status needs to be updated
      */
     private void updateEpicStatus(Epic epic) {
         if (epic == null) return;
@@ -268,9 +323,9 @@ public class InMemoryTaskManager implements TaskManager {
             Subtask subtask = subtasks.get(subtaskId);
             if (subtask != null) {
                 switch (subtask.getStatus()) {
-                    case NEW: newCount++; break;
-                    case DONE: doneCount++; break;
-                    case IN_PROGRESS: hasInProgress = true; break;
+                    case NEW -> newCount++;
+                    case DONE -> doneCount++;
+                    case IN_PROGRESS -> hasInProgress = true;
                 }
             }
         }

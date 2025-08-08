@@ -8,20 +8,27 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * In-memory implementation of {@link HistoryManager} using a custom doubly-linked list and HashMap.
- * Maintains task view history in order of last access, without duplicates.
- * All operations run in O(1) time.
- * <p>Not thread-safe.</p>
+ * In-memory implementation of {@link HistoryManager} using a custom doubly-linked list and {@link HashMap}.
+ * <p>
+ * Maintains a history of viewed tasks in order of last access. Ensures uniqueness:
+ * re-accessed tasks are moved to the end of the list. All core operations (add, remove, get) run in O(1) time.
+ * <p><strong>Note:</strong> This class is <em>not thread-safe</em>.</p>
  */
 public class InMemoryHistoryManager implements HistoryManager {
 
-    /** Maps task ID to its node in the linked list. */
+    /** Maps task ID to its corresponding node in the list for O(1) lookup and removal. */
     private final Map<Integer, Node> history = new HashMap<>();
-    /** Head (oldest) node in the linked list. */
+    /** Head of the doubly-linked list (oldest task). */
     private Node head;
-    /** Tail (most recent) node in the linked list. */
+    /** Tail of the doubly-linked list (most recently accessed task). */
     private Node tail;
 
+    /**
+     * Adds a task to the history. If the task already exists in history,
+     * it is moved to the end (most recent).
+     *
+     * @param task the task to add (ignored if {@code null})
+     */
     @Override
     public void add(Task task) {
         if (task == null) return;
@@ -33,6 +40,11 @@ public class InMemoryHistoryManager implements HistoryManager {
         linkLast(task);
     }
 
+    /**
+     * Removes a task from history by its ID.
+     *
+     * @param id the ID of the task to remove
+     */
     @Override
     public void remove(int id) {
         Node node = history.remove(id);
@@ -41,6 +53,12 @@ public class InMemoryHistoryManager implements HistoryManager {
         }
     }
 
+    /**
+     * Returns the list of tasks in the order they were last accessed.
+     * The oldest task is first, and the most recently viewed is last.
+     *
+     * @return a list of tasks in access order
+     */
     @Override
     public List<Task> getHistory() {
         List<Task> result = new ArrayList<>();
@@ -53,9 +71,9 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     /**
-     * Appends the given task to the end of the list and updates the map.
+     * Appends a task to the end of the list and adds it to the history map.
      *
-     * @param task task to add
+     * @param task the task to add
      */
     private void linkLast(Task task) {
         Node newNode = new Node(tail, task, null);
@@ -69,10 +87,11 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     /**
-     * Removes the given node from the linked list.
-     * Map cleanup is done by the caller.
+     * Removes the given node from the doubly-linked list.
+     * Note: this method does not remove the node from the map —
+     * this should be done by the caller.
      *
-     * @param node node to remove
+     * @param node the node to remove
      */
     private void removeNode(Node node) {
         if (node.prev != null) {
@@ -88,13 +107,24 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     /**
-     * Node for doubly-linked list storage of history.
+     * A node in the doubly-linked list used to store the history.
+     * Contains links to both previous and next nodes for efficient removal.
      */
     private static class Node {
+        /** The task stored in this node. */
         Task task;
+        /** Link to the previous node in the list. */
         Node prev;
+        /** Link to the next node in the list. */
         Node next;
 
+        /**
+         * Creates a new node for the doubly-linked list.
+         *
+         * @param prev the previous node
+         * @param task the task stored in this node
+         * @param next the next node
+         */
         Node(Node prev, Task task, Node next) {
             this.prev = prev;
             this.task = task;

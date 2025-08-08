@@ -1,14 +1,18 @@
 package model;
 
 /**
- * Enumeration representing the status of a task.
+ * Enumeration representing the current status of a task.
+ * <p>
+ * Used for all task types: {@link Task}, {@link Epic}, and {@link Subtask}.
  */
 public enum TaskStatus {
-    /** model.Task is created but not yet started. */
+    /** The task has been created but not yet started. */
     NEW,
-    /** model.Task is currently in progress. */
+
+    /** The task is currently being worked on. */
     IN_PROGRESS,
-    /** model.Task is completed. */
+
+    /** The task has been completed. */
     DONE
 }
 

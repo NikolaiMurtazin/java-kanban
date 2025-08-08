@@ -5,27 +5,37 @@ import model.Task;
 import java.util.List;
 
 /**
- * Interface for managing the history of viewed tasks.
+ * Interface for managing the history of viewed {@link Task} instances.
+ * Used to track and retrieve tasks that were accessed by the user,
+ * typically for display in a "recently viewed" section.
  */
 public interface HistoryManager {
+
     /**
-     * Adds a task to the view history.
+     * Adds a task to the history.
+     * <p>
+     * If the task already exists in history, it is moved to the end (most recent).
+     * If the task is {@code null}, no action is taken.
      *
-     * @param task the task to add (can be null)
+     * @param task the task to add to history; can be null
      */
     void add(Task task);
 
     /**
      * Removes a task from the history by its ID.
+     * <p>
+     * If the ID does not exist in the history, the method does nothing.
      *
-     * @param id the task ID
+     * @param id the unique ID of the task to remove
      */
     void remove(int id);
 
     /**
-     * Returns the history of viewed tasks in access order.
+     * Retrieves the list of tasks in the order they were last accessed.
+     * <p>
+     * The most recently accessed task appears at the end of the list.
      *
-     * @return list of viewed tasks
+     * @return ordered list of previously viewed tasks; empty if no history
      */
     List<Task> getHistory();
 }

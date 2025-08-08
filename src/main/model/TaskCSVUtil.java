@@ -1,63 +1,83 @@
 package model;
 
 import exception.ManagerSaveException;
-import history.HistoryManager;
-import history.InMemoryHistoryManager;
-import manager.InMemoryTaskManager;
-import manager.TaskManager;
 
+/**
+ * Utility class for converting tasks to and from CSV format.
+ */
 public class TaskCSVUtil {
-    HistoryManager historyManager = new InMemoryHistoryManager();
-    TaskManager taskManager = new InMemoryTaskManager(historyManager);
 
+    /**
+     * Converts a {@link Task} (including Epic or Subtask) into a CSV-formatted string.
+     *
+     * @param task the task to convert
+     * @return the CSV string representation
+     * @throws ManagerSaveException if the task is null
+     */
     public static String toCSVString(Task task) {
-        String epicId = "";
-        TaskType taskType;
+        if (task == null) {
+            throw new ManagerSaveException("Cannot serialize null task");
+        }
 
-        if (task instanceof Task) {
-            taskType = TaskType.TASK;
-        } else if (task instanceof Epic) {
-            taskType = TaskType.EPIC;
-        } else if (task instanceof Subtask) {
+        String epicId = "";
+        if (task.getType() == TaskType.SUBTASK) {
             epicId = String.valueOf(((Subtask) task).getEpicId());
-            taskType = TaskType.SUBTASK;
-        } else {
-            throw new ManagerSaveException("Unknown task type: " + task.getClass().getSimpleName());
         }
 
         return String.join(",",
                 String.valueOf(task.getId()),
-                taskType.toString(),
-                task.getName(),
+                task.getType().toString(),
+                escapeCsv(task.getName()),
                 task.getStatus().toString(),
-                task.getDescription(),
+                escapeCsv(task.getDescription()),
                 epicId
         );
     }
 
+    /**
+     * Parses a CSV string into a {@link Task}, {@link Epic}, or {@link Subtask} instance.
+     *
+     * @param value the CSV string
+     * @return the corresponding task object
+     * @throws ManagerSaveException if the input is invalid or parsing fails
+     */
     public static Task fromCSVString(String value) {
-        String[] fields =  value.split(",");
+        String[] fields = value.split(",", -1); // -1: include trailing empty strings
 
         if (fields.length < 5) {
-            throw new ManagerSaveException("Недостаточно полей в строке: " + value);
+            throw new ManagerSaveException("Invalid CSV line: not enough fields -> " + value);
         }
 
-        int id = Integer.parseInt(fields[0]);
-        TaskType type = TaskType.valueOf(fields[1]);
-        String name = fields[2];
-        TaskStatus status = TaskStatus.valueOf(fields[3]);
-        String description = fields[4];
+        try {
+            int id = Integer.parseInt(fields[0]);
+            TaskType type = TaskType.valueOf(fields[1]);
+            String name = unescapeCsv(fields[2]);
+            TaskStatus status = TaskStatus.valueOf(fields[3]);
+            String description = unescapeCsv(fields[4]);
 
-        switch (type) {
-            case TASK:
-                return new Task(id, name, description, status);
-            case EPIC:
-                return new Epic(id, name, description, status);
-            case SUBTASK:
-                int epicId = Integer.parseInt(fields[5]);
-                return new Subtask(id, name, description, status, epicId);
-            default:
-                throw new ManagerSaveException("Неизвестный тип задачи: " + type);
+            return switch (type) {
+                case TASK -> new Task(id, name, description, status);
+                case EPIC -> new Epic(id, name, description, status);
+                case SUBTASK -> {
+                    if (fields.length < 6) {
+                        throw new ManagerSaveException("Missing epicId for subtask: " + value);
+                    }
+                    int epicId = Integer.parseInt(fields[5]);
+                    yield new Subtask(id, name, description, status, epicId);
+                }
+            };
+        } catch (Exception e) {
+            throw new ManagerSaveException("Error while parsing CSV line: " + value, e);
         }
+    }
+
+    // --- Optional: basic escaping in case someone puts commas in names or descriptions ---
+
+    private static String escapeCsv(String text) {
+        return text.replace(",", "\\,");
+    }
+
+    private static String unescapeCsv(String text) {
+        return text.replace("\\,", ",");
     }
 }

@@ -1,64 +1,59 @@
-import history.HistoryManager;
 import history.InMemoryHistoryManager;
-import manager.InMemoryTaskManager;
-import manager.TaskManager;
+import manager.FileBackedTaskManager;
 import model.Epic;
 import model.Subtask;
 import model.Task;
 import model.TaskStatus;
 
+import java.io.File;
+import java.nio.file.Path;
+
 public class Main {
     public static void main(String[] args) {
-        // 1. Setup managers
-        HistoryManager historyManager = new InMemoryHistoryManager();
-        TaskManager taskManager = new InMemoryTaskManager(historyManager);
+        try {
+            Path tempPath = File.createTempFile("manager", ".csv").toPath();
+            FileBackedTaskManager manager = getFileBackedTaskManager(tempPath);
 
-        // 2. Create two regular tasks
-        Task task1 = taskManager.createTask(new Task("model.Task 1", "Simple task 1"));
-        Task task2 = taskManager.createTask(new Task("model.Task 2", "Simple task 2"));
+            System.out.println("Исходный менеджер:");
+            System.out.println("Задачи: " + manager.getAllTasks());
+            System.out.println("Эпики: " + manager.getAllEpics());
+            System.out.println("Подзадачи: " + manager.getAllSubtasks());
 
-        // 3. Create an epic with three subtasks
-        Epic epicWithSubtasks = taskManager.createEpic(new Epic("model.Epic 1", "model.Epic with subtasks"));
-        Subtask sub1 = taskManager.createSubtask(new Subtask("model.Subtask 1", "model.Subtask 1", TaskStatus.NEW, epicWithSubtasks.getId()));
-        Subtask sub2 = taskManager.createSubtask(new Subtask("model.Subtask 2", "model.Subtask 2", TaskStatus.NEW, epicWithSubtasks.getId()));
-        Subtask sub3 = taskManager.createSubtask(new Subtask("model.Subtask 3", "model.Subtask 3", TaskStatus.NEW, epicWithSubtasks.getId()));
+            // 2. Загружаем из файла новый менеджер
+            FileBackedTaskManager loadedManager = FileBackedTaskManager.loadFromFile(tempPath);
 
-        // 4. Create an epic without subtasks
-        Epic epicWithoutSubtasks = taskManager.createEpic(new Epic("model.Epic 2", "model.Epic without subtasks"));
+            System.out.println("\nЗагруженный менеджер:");
+            System.out.println("Задачи: " + loadedManager.getAllTasks());
+            System.out.println("Эпики: " + loadedManager.getAllEpics());
+            System.out.println("Подзадачи: " + loadedManager.getAllSubtasks());
 
-        // 5. Simulate user viewing tasks in different orders
-        // View task1, epicWithSubtasks, sub1
-        taskManager.getTaskById(task1.getId());
-        taskManager.getEpicById(epicWithSubtasks.getId());
-        taskManager.getSubtaskById(sub1.getId());
-        printHistory(historyManager, "History after viewing task1, epicWithSubtasks, sub1:");
-
-        // View task2, sub2, sub3, epicWithoutSubtasks
-        taskManager.getTaskById(task2.getId());
-        taskManager.getSubtaskById(sub2.getId());
-        taskManager.getSubtaskById(sub3.getId());
-        taskManager.getEpicById(epicWithoutSubtasks.getId());
-        printHistory(historyManager, "History after viewing task2, sub2, sub3, epicWithoutSubtasks:");
-
-        // View sub1 and epicWithSubtasks again (should move them to the end)
-        taskManager.getSubtaskById(sub1.getId());
-        taskManager.getEpicById(epicWithSubtasks.getId());
-        printHistory(historyManager, "History after re-viewing sub1 and epicWithSubtasks:");
-
-        // 6. Remove task2 from the system (and thus from history)
-        taskManager.deleteTaskById(task2.getId());
-        printHistory(historyManager, "History after deleting task2:");
-
-        // 7. Remove epicWithSubtasks (and all its subtasks)
-        taskManager.deleteEpicById(epicWithSubtasks.getId());
-        printHistory(historyManager, "History after deleting epicWithSubtasks and its subtasks:");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    private static void printHistory(HistoryManager historyManager, String header) {
-        System.out.println(header);
-        for (Task t : historyManager.getHistory()) {
-            System.out.println("  " + t);
-        }
-        System.out.println();
+    private static FileBackedTaskManager getFileBackedTaskManager(Path tempPath) {
+        FileBackedTaskManager manager = new FileBackedTaskManager(new InMemoryHistoryManager(), tempPath);
+
+        // 1. Создаём задачи
+        Task task1 = new Task("Почитать книгу", "Прочитать Clean Code", TaskStatus.NEW);
+        Task task2 = new Task("Написать код", "Реализовать FileBackedTaskManager", TaskStatus.IN_PROGRESS);
+
+        Epic epic1 = new Epic("Переезд", "Подготовка к переезду");
+        Epic epic2 = new Epic("Организация свадьбы", "Планирование");
+
+        manager.createTask(task1);
+        manager.createTask(task2);
+        manager.createEpic(epic1);
+        manager.createEpic(epic2);
+
+        Subtask sub1 = new Subtask("Собрать вещи", "Сложить всё по коробкам", TaskStatus.NEW, epic1.getId());
+        Subtask sub2 = new Subtask("Снять грузовик", "Забронировать машину", TaskStatus.DONE, epic1.getId());
+        Subtask sub3 = new Subtask("Выбрать ресторан", "Позвонить в 3 заведения", TaskStatus.NEW, epic2.getId());
+
+        manager.createSubtask(sub1);
+        manager.createSubtask(sub2);
+        manager.createSubtask(sub3);
+        return manager;
     }
 }

@@ -7,32 +7,36 @@ import model.Task;
 import java.util.List;
 
 /**
- * Contract for a task manager. Provides CRUD operations for tasks, epics, and subtasks,
- * as well as retrieval of all items by type and subtask lookup for epics.
+ * Interface defining the contract for a task manager.
+ * Provides CRUD operations for {@link Task}, {@link Epic}, and {@link Subtask},
+ * as well as lookup methods and utilities for working with task hierarchies.
  */
 public interface TaskManager {
-    // --- model.Task methods ---
+
+    // --- Task methods ---
 
     /**
-     * Returns all regular tasks.
+     * Returns a list of all regular tasks.
+     *
+     * @return list of tasks; empty if none exist
      */
     List<Task> getAllTasks();
 
     /**
-     * Removes all regular tasks.
+     * Removes all regular tasks from the manager.
      */
     void removeAllTasks();
 
     /**
-     * Returns a task by its unique identifier.
+     * Retrieves a task by its unique identifier.
      *
      * @param id the task ID
-     * @return the task or null if not found
+     * @return the task if found; otherwise {@code null}
      */
     Task getTaskById(int id);
 
     /**
-     * Creates a new task, assigning it a unique ID.
+     * Creates and stores a new task, assigning it a unique ID.
      *
      * @param task the task to create
      * @return the created task with assigned ID
@@ -40,113 +44,116 @@ public interface TaskManager {
     Task createTask(Task task);
 
     /**
-     * Updates an existing task by ID.
+     * Updates an existing task with new data.
+     * The task must already exist in the manager.
      *
-     * @param task the task with updated data
+     * @param task the task containing updated fields
      */
     void updateTask(Task task);
 
     /**
-     * Deletes a task by ID.
+     * Deletes a task by its unique identifier.
      *
-     * @param id the task ID
+     * @param id the ID of the task to delete
      */
     void deleteTaskById(int id);
 
-    // --- model.Epic methods ---
+    // --- Epic methods ---
 
     /**
-     * Returns all epics.
+     * Returns a list of all epics.
+     *
+     * @return list of epics; empty if none exist
      */
     List<Epic> getAllEpics();
 
     /**
-     * Removes all epics (and all their subtasks).
+     * Removes all epics and all associated subtasks.
      */
     void removeAllEpics();
 
     /**
-     * Returns an epic by ID.
+     * Retrieves an epic by its unique identifier.
      *
      * @param id the epic ID
-     * @return the epic or null if not found
+     * @return the epic if found; otherwise {@code null}
      */
     Epic getEpicById(int id);
 
     /**
-     * Creates a new epic, assigning it a unique ID.
+     * Creates a new epic and assigns it a unique ID.
      *
      * @param epic the epic to create
-     * @return the created epic
+     * @return the created epic with assigned ID
      */
     Epic createEpic(Epic epic);
 
     /**
-     * Updates an existing epic's name and description by ID.
-     * Subtasks and status are managed internally.
+     * Updates an epic's name and description.
+     * The epic must already exist; its status and subtasks are managed internally.
      *
-     * @param epic the epic with updated data
+     * @param epic the epic with updated fields
      */
     void updateEpic(Epic epic);
 
     /**
-     * Deletes an epic by ID and all its subtasks.
+     * Deletes an epic by ID and removes all its associated subtasks.
      *
-     * @param id the epic ID
-     * @return the deleted epic or null if not found
+     * @param id the ID of the epic to delete
      */
-    Epic deleteEpicById(int id);
+    void deleteEpicById(int id);
 
-    // --- model.Subtask methods ---
+    // --- Subtask methods ---
 
     /**
-     * Returns all subtasks.
+     * Returns a list of all subtasks.
+     *
+     * @return list of subtasks; empty if none exist
      */
     List<Subtask> getAllSubtasks();
 
     /**
-     * Removes all subtasks (and updates affected epics).
+     * Removes all subtasks and updates statuses of affected epics.
      */
     void removeAllSubtasks();
 
     /**
-     * Returns a subtask by ID.
+     * Retrieves a subtask by its unique identifier.
      *
      * @param id the subtask ID
-     * @return the subtask or null if not found
+     * @return the subtask if found; otherwise {@code null}
      */
     Subtask getSubtaskById(int id);
 
     /**
-     * Creates a new subtask for the specified epic.
-     * Assigns it a unique ID and updates the parent epic's status.
+     * Creates a new subtask and assigns it to the specified epic.
+     * Also assigns a unique ID to the subtask and updates the parent epic's status.
      *
      * @param subtask the subtask to create
-     * @return the created subtask or null if parent epic not found
+     * @return the created subtask; or {@code null} if the parent epic is not found
      */
     Subtask createSubtask(Subtask subtask);
 
     /**
-     * Updates an existing subtask by ID.
-     * If the epic reference changes, re-binds it.
-     * Updates the status of affected epics.
+     * Updates an existing subtask.
+     * Handles reassigning to a different epic if needed, and updates statuses accordingly.
      *
-     * @param subtask the subtask with updated data
+     * @param subtask the subtask with updated fields
      */
     void updateSubtask(Subtask subtask);
 
     /**
-     * Deletes a subtask by ID and updates the parent epic's status.
+     * Deletes a subtask by its ID and updates the status of the parent epic.
      *
      * @param id the subtask ID
      */
     void deleteSubtaskById(int id);
 
     /**
-     * Returns all subtasks of the given epic.
+     * Retrieves all subtasks assigned to a specific epic.
      *
-     * @param epicId the epic ID
-     * @return list of subtasks (empty if epic not found or has no subtasks)
+     * @param epicId the ID of the epic
+     * @return list of subtasks; empty if epic not found or no subtasks exist
      */
     List<Subtask> getEpicSubtasks(int epicId);
 }
