@@ -1,3 +1,7 @@
+import history.HistoryManager;
+import history.InMemoryHistoryManager;
+import model.Task;
+import model.TaskStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,7 +25,7 @@ class InMemoryHistoryManagerTest {
      */
     @Test
     void addedTasksShouldRetainTheirDataInHistory() {
-        Task task1 = new Task("Task 1", "Desc 1", TaskStatus.NEW);
+        Task task1 = new Task("model.Task 1", "Desc 1", TaskStatus.NEW);
         task1.setId(1);
         historyManager.add(task1);
 
@@ -42,8 +46,8 @@ class InMemoryHistoryManagerTest {
      */
     @Test
     void historyShouldNotHaveDuplicatesAndRetainOnlyMostRecent() {
-        Task t1 = new Task("Task 1", "Desc", TaskStatus.NEW); t1.setId(1);
-        Task t2 = new Task("Task 2", "Desc", TaskStatus.NEW); t2.setId(2);
+        Task t1 = new Task("model.Task 1", "Desc", TaskStatus.NEW); t1.setId(1);
+        Task t2 = new Task("model.Task 2", "Desc", TaskStatus.NEW); t2.setId(2);
         historyManager.add(t1);
         historyManager.add(t2);
         historyManager.add(t1); // t1 should move to the end
@@ -59,8 +63,8 @@ class InMemoryHistoryManagerTest {
      */
     @Test
     void removingTaskShouldRemoveItFromHistory() {
-        Task t1 = new Task("Task 1", "Desc", TaskStatus.NEW); t1.setId(1);
-        Task t2 = new Task("Task 2", "Desc", TaskStatus.NEW); t2.setId(2);
+        Task t1 = new Task("model.Task 1", "Desc", TaskStatus.NEW); t1.setId(1);
+        Task t2 = new Task("model.Task 2", "Desc", TaskStatus.NEW); t2.setId(2);
         historyManager.add(t1);
         historyManager.add(t2);
         historyManager.remove(t1.getId());
@@ -84,7 +88,7 @@ class InMemoryHistoryManagerTest {
      */
     @Test
     void getHistoryShouldReturnCopy() {
-        Task t = new Task("Test Task", "Desc", TaskStatus.NEW); t.setId(1);
+        Task t = new Task("Test model.Task", "Desc", TaskStatus.NEW); t.setId(1);
         historyManager.add(t);
 
         List<Task> h1 = historyManager.getHistory();

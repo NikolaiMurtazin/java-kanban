@@ -14,33 +14,33 @@ The backend provides a robust data model and a set of functionalities to manage 
 
 ## Key Features
 
-* **Task Management:**
+* **model.Task Management:**
     * Create, retrieve, update, and delete (CRUD) operations for three types of tasks:
         * **Tasks:** Simple, standalone tasks.
         * **Epics:** Large tasks that can be broken down into multiple subtasks.
-        * **Subtasks:** Smaller, dependent tasks that belong to a specific Epic.
+        * **Subtasks:** Smaller, dependent tasks that belong to a specific model.Epic.
     * Unique ID generation for all task types.
 * **Status Management:**
     * Tasks and Subtasks have explicit statuses (`NEW`, `IN_PROGRESS`, `DONE`).
-    * Epic statuses are automatically calculated based on the statuses of their associated Subtasks:
-        * `NEW`: If an Epic has no Subtasks or all Subtasks are `NEW`.
+    * model.Epic statuses are automatically calculated based on the statuses of their associated Subtasks:
+        * `NEW`: If an model.Epic has no Subtasks or all Subtasks are `NEW`.
         * `DONE`: If all Subtasks are `DONE`.
-        * `IN_PROGRESS`: In all other cases (mixed statuses or at least one `IN_PROGRESS` Subtask).
+        * `IN_PROGRESS`: In all other cases (mixed statuses or at least one `IN_PROGRESS` model.Subtask).
 * **Hierarchical Structure:**
-    * Each Subtask is linked to a parent Epic.
-    * Epics maintain a list of their Subtask IDs.
-* **Task History (Viewing History):**
-    * A dedicated `HistoryManager` tracks recently viewed tasks, epics, and subtasks.
+    * Each model.Subtask is linked to a parent model.Epic.
+    * Epics maintain a list of their model.Subtask IDs.
+* **model.Task History (Viewing History):**
+    * A dedicated `history.HistoryManager` tracks recently viewed tasks, epics, and subtasks.
     * The history currently stores up to 10 last viewed items, allowing duplicates.
 * **Architectural Principles:**
-    * **Dependency Injection:** `InMemoryTaskManager` receives `HistoryManager` via its constructor.
-    * **Interface-based Programming:** Utilizes interfaces (`TaskManager`, `HistoryManager`) to decouple implementation details from core logic, allowing for future extensions (e.g., file-backed or database storage) without modifying client code.
-    * **Singleton Pattern:** The `Managers` utility class ensures that only one instance of `TaskManager` and `HistoryManager` is used throughout the application, promoting consistent state management.
+    * **Dependency Injection:** `manager.InMemoryTaskManager` receives `history.HistoryManager` via its constructor.
+    * **Interface-based Programming:** Utilizes interfaces (`manager.TaskManager`, `history.HistoryManager`) to decouple implementation details from core logic, allowing for future extensions (e.g., file-backed or database storage) without modifying client code.
+    * **Singleton Pattern:** The `manager.Managers` utility class ensures that only one instance of `manager.TaskManager` and `history.HistoryManager` is used throughout the application, promoting consistent state management.
 * **Unit Testing:**
     * Comprehensive unit tests implemented with JUnit 5 to ensure the correctness and robustness of all core functionalities, including:
-        * `equals()` and `hashCode()` contract adherence for `Task` and its subclasses.
+        * `equals()` and `hashCode()` contract adherence for `model.Task` and its subclasses.
         * Correct CRUD operations for all task types.
-        * Accurate Epic status calculation.
+        * Accurate model.Epic status calculation.
         * Proper history management logic.
         * Verification of manager initialization and singleton behavior.
 

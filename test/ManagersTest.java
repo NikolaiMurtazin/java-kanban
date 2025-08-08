@@ -1,3 +1,8 @@
+import history.HistoryManager;
+import manager.Managers;
+import manager.TaskManager;
+import model.Task;
+import model.TaskStatus;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +14,7 @@ import java.util.List;
 class ManagersTest {
 
     /**
-     * Should always return a non-null initialized TaskManager instance.
+     * Should always return a non-null initialized manager.TaskManager instance.
      */
     @Test
     void getDefaultShouldReturnInitializedTaskManager() {
@@ -19,7 +24,7 @@ class ManagersTest {
     }
 
     /**
-     * Should always return a non-null initialized HistoryManager instance.
+     * Should always return a non-null initialized history.HistoryManager instance.
      */
     @Test
     void getDefaultHistoryShouldReturnInitializedHistoryManager() {
@@ -29,7 +34,7 @@ class ManagersTest {
     }
 
     /**
-     * getDefault() should always return the same TaskManager instance (singleton).
+     * getDefault() should always return the same manager.TaskManager instance (singleton).
      */
     @Test
     void getDefaultShouldReturnSameInstance() {
@@ -39,7 +44,7 @@ class ManagersTest {
     }
 
     /**
-     * getDefaultHistory() should always return the same HistoryManager instance (singleton).
+     * getDefaultHistory() should always return the same history.HistoryManager instance (singleton).
      */
     @Test
     void getDefaultHistoryShouldReturnSameInstance() {
@@ -49,14 +54,14 @@ class ManagersTest {
     }
 
     /**
-     * TaskManager and HistoryManager returned by Managers should be connected (use the same history).
+     * manager.TaskManager and history.HistoryManager returned by manager.Managers should be connected (use the same history).
      */
     @Test
     void taskManagerAndHistoryManagerShouldBeConnected() {
         TaskManager manager = Managers.getDefault();
         HistoryManager historyManager = Managers.getDefaultHistory();
 
-        Task task = new Task("Connected Test Task", "Desc", TaskStatus.NEW);
+        Task task = new Task("Connected Test model.Task", "Desc", TaskStatus.NEW);
         manager.createTask(task);
         manager.getTaskById(task.getId());
 
