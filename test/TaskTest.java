@@ -82,7 +82,7 @@ class TaskTest {
      */
     @Test
     void toStringShouldReturnCorrectRepresentation() {
-        String expected = "model.Task{id=1, name='model.Task 1', description='Description 1', status=NEW}";
+        String expected = "Task{id=1, name='model.Task 1', description='Description 1', status=NEW}";
         Assertions.assertEquals(expected, task1.toString());
     }
 }
