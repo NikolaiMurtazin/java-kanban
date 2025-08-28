@@ -95,6 +95,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     manager.getTasks().put(task.getId(), task);
                 }
             }
+            manager.rebuildDerivedState();
 
             manager.setNextId(maxId + 1);
 

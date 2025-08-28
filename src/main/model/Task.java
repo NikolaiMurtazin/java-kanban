@@ -1,5 +1,7 @@
 package model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -28,6 +30,10 @@ public class Task {
      */
     private TaskStatus status;
 
+    private Duration duration;
+
+    private LocalDateTime startTime;
+
     /**
      * Constructs a new task with default status {@link TaskStatus#NEW}.
      *
@@ -53,6 +59,15 @@ public class Task {
         this.status = status;
     }
 
+    public Task(String name, String description, TaskStatus status, Duration duration,
+                LocalDateTime startTime) {
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
+    }
+
     /**
      * Constructs a fully defined task with ID, name, description, and status.
      *
@@ -61,11 +76,14 @@ public class Task {
      * @param description the task description
      * @param status      the task status
      */
-    public Task(int id, String name, String description, TaskStatus status) {
+    public Task(int id, String name, String description, TaskStatus status, Duration duration,
+                LocalDateTime startTime) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.status = status;
+        this.duration = duration;
+        this.startTime = startTime;
     }
 
     /**
@@ -140,6 +158,26 @@ public class Task {
         return TaskType.TASK;
     }
 
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime != null && duration != null ? startTime.plus(duration) : null;
+    }
+
     /**
      * Checks equality based on the unique task ID.
      *
@@ -171,6 +209,9 @@ public class Task {
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", status=" + status +
+                ", startTime=" + startTime +
+                ", duration=" + (duration != null ? duration.toMinutes() + " min" : "null") +
+                ", endTime=" + getEndTime() +
                 '}';
     }
 }

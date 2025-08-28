@@ -1,5 +1,8 @@
 package model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 /**
  * Represents a subtask that belongs to a specific {@link Epic}.
  * A subtask cannot exist without a parent epic, identified by {@code epicId}.
@@ -23,6 +26,11 @@ public class Subtask extends Task {
         this.epicId = epicId;
     }
 
+    public Subtask(String name, String description, TaskStatus status, int epicId, Duration duration, LocalDateTime startTime) {
+        super(name, description, status, duration, startTime);
+        this.epicId = epicId;
+    }
+
     /**
      * Constructs a new subtask with a predefined ID (e.g., when loading from file).
      *
@@ -32,8 +40,8 @@ public class Subtask extends Task {
      * @param status      the status of the subtask
      * @param epicId      the ID of the parent epic
      */
-    public Subtask(int id, String name, String description, TaskStatus status, int epicId) {
-        super(id, name, description, status);
+    public Subtask(int id, String name, String description, TaskStatus status, int epicId, Duration duration, LocalDateTime startTime) {
+        super(id, name, description, status, duration, startTime);
         this.epicId = epicId;
     }
 
@@ -69,6 +77,9 @@ public class Subtask extends Task {
                 ", description='" + getDescription() + '\'' +
                 ", status=" + getStatus() +
                 ", epicId=" + epicId +
+                ", startTime=" + getStartTime() +
+                ", duration=" + (getDuration() != null ? getDuration().toMinutes() + " min" : "null") +
+                ", endTime=" + getEndTime() +
                 '}';
     }
 }

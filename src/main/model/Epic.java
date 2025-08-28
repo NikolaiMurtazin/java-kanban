@@ -2,6 +2,8 @@ package model;
 
 import manager.TaskManager;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,8 @@ import java.util.List;
  * of its subtasks and managed by the {@link TaskManager}.
  */
 public class Epic extends Task {
+
+    private LocalDateTime endTime;
 
     /**
      * List of subtask IDs associated with this epic.
@@ -38,8 +42,8 @@ public class Epic extends Task {
      * @param description the description of the epic
      * @param taskStatus  the status of the epic (managed by task manager)
      */
-    public Epic(int id, String name, String description, TaskStatus taskStatus) {
-        super(id, name, description, taskStatus);
+    public Epic(int id, String name, String description, TaskStatus taskStatus, Duration duration, LocalDateTime startTime) {
+        super(id, name, description, taskStatus, duration, startTime);
         this.subtaskIds = new ArrayList<>();
     }
 
@@ -90,6 +94,15 @@ public class Epic extends Task {
         return TaskType.EPIC;
     }
 
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
     /**
      * Returns a string representation of the epic, including its ID, name,
      * description, status, and subtask IDs.
@@ -103,6 +116,9 @@ public class Epic extends Task {
                 ", name='" + getName() + '\'' +
                 ", description='" + getDescription() + '\'' +
                 ", status=" + getStatus() +
+                ", startTime=" + getStartTime() +
+                ", duration=" + (getDuration() != null ? getDuration().toMinutes() + " min" : "null") +
+                ", endTime=" + getEndTime() +
                 ", subtaskIds=" + subtaskIds +
                 '}';
     }
