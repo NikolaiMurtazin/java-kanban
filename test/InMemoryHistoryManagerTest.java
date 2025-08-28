@@ -20,12 +20,9 @@ class InMemoryHistoryManagerTest {
         historyManager = new InMemoryHistoryManager();
     }
 
-    /**
-     * Tasks added to history should retain their data.
-     */
     @Test
     void addedTasksShouldRetainTheirDataInHistory() {
-        Task task1 = new Task("model.Task 1", "Desc 1", TaskStatus.NEW);
+        Task task1 = new Task("Task 1", "Desc 1", TaskStatus.NEW);
         task1.setId(1);
         historyManager.add(task1);
 
@@ -38,19 +35,17 @@ class InMemoryHistoryManagerTest {
         Assertions.assertEquals(task1.getName(), retrievedTask.getName());
         Assertions.assertEquals(task1.getDescription(), retrievedTask.getDescription());
         Assertions.assertEquals(task1.getStatus(), retrievedTask.getStatus());
+        // We return the same instance (by design):
         Assertions.assertSame(task1, retrievedTask);
     }
 
-    /**
-     * History should not allow duplicates; most recent view is retained.
-     */
     @Test
     void historyShouldNotHaveDuplicatesAndRetainOnlyMostRecent() {
-        Task t1 = new Task("model.Task 1", "Desc", TaskStatus.NEW); t1.setId(1);
-        Task t2 = new Task("model.Task 2", "Desc", TaskStatus.NEW); t2.setId(2);
+        Task t1 = new Task("Task 1", "Desc", TaskStatus.NEW); t1.setId(1);
+        Task t2 = new Task("Task 2", "Desc", TaskStatus.NEW); t2.setId(2);
         historyManager.add(t1);
         historyManager.add(t2);
-        historyManager.add(t1); // t1 should move to the end
+        historyManager.add(t1); // t1 moves to the end
 
         List<Task> history = historyManager.getHistory();
         Assertions.assertEquals(2, history.size());
@@ -58,13 +53,10 @@ class InMemoryHistoryManagerTest {
         Assertions.assertEquals(t1.getId(), history.get(1).getId());
     }
 
-    /**
-     * Removing a task from history should work and not affect others.
-     */
     @Test
     void removingTaskShouldRemoveItFromHistory() {
-        Task t1 = new Task("model.Task 1", "Desc", TaskStatus.NEW); t1.setId(1);
-        Task t2 = new Task("model.Task 2", "Desc", TaskStatus.NEW); t2.setId(2);
+        Task t1 = new Task("Task 1", "Desc", TaskStatus.NEW); t1.setId(1);
+        Task t2 = new Task("Task 2", "Desc", TaskStatus.NEW); t2.setId(2);
         historyManager.add(t1);
         historyManager.add(t2);
         historyManager.remove(t1.getId());
@@ -74,21 +66,15 @@ class InMemoryHistoryManagerTest {
         Assertions.assertEquals(t2.getId(), history.get(0).getId());
     }
 
-    /**
-     * Adding null should not affect history.
-     */
     @Test
     void addingNullTaskShouldNotAffectHistory() {
         historyManager.add(null);
         Assertions.assertTrue(historyManager.getHistory().isEmpty());
     }
 
-    /**
-     * getHistory() should return a copy, not a direct reference to the internal list.
-     */
     @Test
     void getHistoryShouldReturnCopy() {
-        Task t = new Task("Test model.Task", "Desc", TaskStatus.NEW); t.setId(1);
+        Task t = new Task("Test Task", "Desc", TaskStatus.NEW); t.setId(1);
         historyManager.add(t);
 
         List<Task> h1 = historyManager.getHistory();
