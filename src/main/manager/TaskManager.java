@@ -156,4 +156,11 @@ public interface TaskManager {
      * @return list of subtasks; empty if epic not found or no subtasks exist
      */
     List<Subtask> getEpicSubtasks(int epicId);
+
+    /**
+     * Returns a snapshot list of prioritized tasks/subtasks (sorted by start time).
+     *
+     * @return immutable copy ordered by priority
+     */
+    List<Task> getPrioritizedTasks();
 }
