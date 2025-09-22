@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.util.List;
 
 public class PrioritizedHandler extends BaseHttpHandler {
-    public PrioritizedHandler(TaskManager manager, Gson gson) { super(manager, gson); }
+    public PrioritizedHandler(TaskManager manager, Gson gson) {
+        super(manager, gson);
+    }
 
     @Override
     public void handle(HttpExchange h) throws IOException {

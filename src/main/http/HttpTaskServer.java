@@ -39,11 +39,11 @@ public class HttpTaskServer {
         try {
             server = HttpServer.create(new InetSocketAddress(PORT), 0);
 
-            server.createContext("/tasks",      new TaskHandler(taskManager, gson));
-            server.createContext("/epics",      new EpicHandler(taskManager, gson));
-            server.createContext("/subtasks",   new SubtaskHandler(taskManager, gson));
-            server.createContext("/history",    new HistoryHandler(historyManager, gson));
-            server.createContext("/prioritized",new PrioritizedHandler(taskManager, gson));
+            server.createContext("/tasks", new TaskHandler(taskManager, gson));
+            server.createContext("/epics", new EpicHandler(taskManager, gson));
+            server.createContext("/subtasks", new SubtaskHandler(taskManager, gson));
+            server.createContext("/history", new HistoryHandler(historyManager, gson));
+            server.createContext("/prioritized", new PrioritizedHandler(taskManager, gson));
 
             server.setExecutor(null);
             server.start();
@@ -60,7 +60,9 @@ public class HttpTaskServer {
         }
     }
 
-    public Gson getGson() { return gson; }
+    public Gson getGson() {
+        return gson;
+    }
 
     public static void main(String[] args) {
         HttpTaskServer server = new HttpTaskServer();

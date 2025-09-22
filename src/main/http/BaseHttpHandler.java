@@ -23,11 +23,13 @@ public abstract class BaseHttpHandler implements HttpHandler {
         byte[] resp = json.getBytes(StandardCharsets.UTF_8);
         h.getResponseHeaders().add("Content-Type", "application/json; charset=utf-8");
         h.sendResponseHeaders(status, resp.length);
-        try (OutputStream os = h.getResponseBody()) { os.write(resp); }
+        try (OutputStream os = h.getResponseBody()) {
+            os.write(resp);
+        }
     }
 
     protected void sendText(HttpExchange h, int status, String text) throws IOException {
-        sendJson(h, status, "\"" + text.replace("\"","\\\"") + "\"");
+        sendJson(h, status, "\"" + text.replace("\"", "\\\"") + "\"");
     }
 
     protected void sendNotFound(HttpExchange h, String msg) throws IOException {
@@ -48,8 +50,10 @@ public abstract class BaseHttpHandler implements HttpHandler {
         for (String p : query.split("&")) {
             String[] kv = p.split("=", 2);
             if (kv.length == 2 && kv[0].equals("id")) {
-                try { return Optional.of(Integer.parseInt(kv[1])); }
-                catch (NumberFormatException ignored) {}
+                try {
+                    return Optional.of(Integer.parseInt(kv[1]));
+                } catch (NumberFormatException ignored) {
+                }
             }
         }
         return Optional.empty();

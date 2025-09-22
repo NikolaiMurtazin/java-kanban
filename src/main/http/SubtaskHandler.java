@@ -11,7 +11,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class SubtaskHandler extends BaseHttpHandler {
-    public SubtaskHandler(TaskManager manager, Gson gson) { super(manager, gson); }
+    public SubtaskHandler(TaskManager manager, Gson gson) {
+        super(manager, gson);
+    }
 
     @Override
     public void handle(HttpExchange h) throws IOException {
@@ -23,10 +25,10 @@ public class SubtaskHandler extends BaseHttpHandler {
             }
 
             switch (h.getRequestMethod()) {
-                case "GET"    -> handleGet(h);
-                case "POST"   -> handlePost(h);
+                case "GET" -> handleGet(h);
+                case "POST" -> handlePost(h);
                 case "DELETE" -> handleDelete(h);
-                default       -> sendText(h, 405, "Method Not Allowed");
+                default -> sendText(h, 405, "Method Not Allowed");
             }
         } catch (IllegalArgumentException overlap) {
             sendHasInteractions(h, "Subtask time overlaps: " + overlap.getMessage());
@@ -44,23 +46,35 @@ public class SubtaskHandler extends BaseHttpHandler {
         }
         int id = idOpt.get();
         Subtask s = manager.getSubtaskById(id);
-        if (s == null) { sendNotFound(h, "Subtask id=" + id + " not found"); return; }
+        if (s == null) {
+            sendNotFound(h, "Subtask id=" + id + " not found");
+            return;
+        }
         sendJson(h, 200, gson.toJson(s));
     }
 
     private void handleGetByEpic(HttpExchange h) throws IOException {
         Optional<Integer> idOpt = getQueryId(h);
-        if (idOpt.isEmpty()) { sendText(h, 400, "epic id is required"); return; }
+        if (idOpt.isEmpty()) {
+            sendText(h, 400, "epic id is required");
+            return;
+        }
         int epicId = idOpt.get();
         Epic e = manager.getEpicById(epicId);
-        if (e == null) { sendNotFound(h, "Epic id=" + epicId + " not found"); return; }
+        if (e == null) {
+            sendNotFound(h, "Epic id=" + epicId + " not found");
+            return;
+        }
         sendJson(h, 200, gson.toJson(manager.getEpicSubtasks(epicId)));
     }
 
     private void handlePost(HttpExchange h) throws IOException {
         String body = readBody(h);
         Subtask incoming = gson.fromJson(body, Subtask.class);
-        if (incoming == null) { sendText(h, 400, "Bad Request: empty/invalid JSON"); return; }
+        if (incoming == null) {
+            sendText(h, 400, "Bad Request: empty/invalid JSON");
+            return;
+        }
 
         // проверим существование эпика
         if (manager.getEpicById(incoming.getEpicId()) == null) {
@@ -85,7 +99,10 @@ public class SubtaskHandler extends BaseHttpHandler {
             return;
         }
         int id = idOpt.get();
-        if (manager.getSubtaskById(id) == null) { sendNotFound(h, "Subtask id=" + id + " not found"); return; }
+        if (manager.getSubtaskById(id) == null) {
+            sendNotFound(h, "Subtask id=" + id + " not found");
+            return;
+        }
         manager.deleteSubtaskById(id);
         sendText(h, 200, "Subtask id=" + id + " removed");
     }

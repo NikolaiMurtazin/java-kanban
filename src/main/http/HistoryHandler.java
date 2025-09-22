@@ -30,12 +30,16 @@ public class HistoryHandler implements HttpHandler {
             byte[] resp = gson.toJson(hist).getBytes(java.nio.charset.StandardCharsets.UTF_8);
             h.getResponseHeaders().add("Content-Type", "application/json; charset=utf-8");
             h.sendResponseHeaders(200, resp.length);
-            try (var os = h.getResponseBody()) { os.write(resp); }
+            try (var os = h.getResponseBody()) {
+                os.write(resp);
+            }
         } catch (Exception e) {
             String msg = "Internal Server Error: " + e.getMessage();
-            byte[] resp = ("\"" + msg.replace("\"","\\\"") + "\"").getBytes(java.nio.charset.StandardCharsets.UTF_8);
+            byte[] resp = ("\"" + msg.replace("\"", "\\\"") + "\"").getBytes(java.nio.charset.StandardCharsets.UTF_8);
             h.sendResponseHeaders(500, resp.length);
-            try (var os = h.getResponseBody()) { os.write(resp); }
+            try (var os = h.getResponseBody()) {
+                os.write(resp);
+            }
         }
     }
 }
