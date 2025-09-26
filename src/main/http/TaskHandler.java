@@ -9,7 +9,37 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * HTTP handler for tasks endpoint.
+ * <p>
+ * Base endpoint: {@code /tasks}
+ * <ul>
+ *     <li><b>GET /tasks</b> — returns all tasks (JSON array)</li>
+ *     <li><b>GET /tasks?id={id}</b> — returns a task by ID</li>
+ *     <li><b>POST /tasks</b> — creates or updates a task (expects JSON body)</li>
+ *     <li><b>DELETE /tasks</b> — removes all tasks</li>
+ *     <li><b>DELETE /tasks?id={id}</b> — removes a task by ID</li>
+ * </ul>
+ *
+ * <p>Response codes:
+ * <ul>
+ *     <li>200 — request successful</li>
+ *     <li>201 — task created</li>
+ *     <li>400 — invalid input (e.g. empty/invalid JSON)</li>
+ *     <li>404 — task not found</li>
+ *     <li>405 — method not allowed</li>
+ *     <li>406 — task time overlaps with another task</li>
+ *     <li>500 — internal server error</li>
+ * </ul>
+ */
 public class TaskHandler extends BaseHttpHandler {
+
+    /**
+     * Creates a new task handler.
+     *
+     * @param manager task manager to delegate business logic
+     * @param gson    gson instance for JSON serialization/deserialization
+     */
     public TaskHandler(TaskManager manager, Gson gson) {
         super(manager, gson);
     }

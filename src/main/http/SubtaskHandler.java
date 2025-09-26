@@ -10,7 +10,38 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * HTTP handler for subtasks endpoint.
+ * <p>
+ * Base endpoint: {@code /subtasks}
+ * <ul>
+ *     <li><b>GET /subtasks</b> — returns all subtasks (JSON array)</li>
+ *     <li><b>GET /subtasks?id={id}</b> — returns subtask by ID</li>
+ *     <li><b>GET /subtasks/epic?id={epicId}</b> — returns all subtasks of the given epic</li>
+ *     <li><b>POST /subtasks</b> — creates or updates subtask (expects JSON body)</li>
+ *     <li><b>DELETE /subtasks</b> — removes all subtasks</li>
+ *     <li><b>DELETE /subtasks?id={id}</b> — removes subtask by ID</li>
+ * </ul>
+ *
+ * <p>Response codes:
+ * <ul>
+ *     <li>200 — request successful</li>
+ *     <li>201 — subtask created</li>
+ *     <li>400 — invalid input (e.g. missing epic ID)</li>
+ *     <li>404 — subtask or epic not found</li>
+ *     <li>405 — method not allowed</li>
+ *     <li>406 — subtask time overlaps with another task</li>
+ *     <li>500 — internal server error</li>
+ * </ul>
+ */
 public class SubtaskHandler extends BaseHttpHandler {
+
+    /**
+     * Creates a new subtask handler.
+     *
+     * @param manager task manager to delegate business logic
+     * @param gson    gson instance for JSON serialization/deserialization
+     */
     public SubtaskHandler(TaskManager manager, Gson gson) {
         super(manager, gson);
     }
@@ -18,7 +49,7 @@ public class SubtaskHandler extends BaseHttpHandler {
     @Override
     public void handle(HttpExchange h) throws IOException {
         try {
-            String path = h.getRequestURI().getPath(); // /subtasks или /subtasks/epic
+            String path = h.getRequestURI().getPath(); // e.g. /subtasks or /subtasks/epic
             if (path.endsWith("/epic") && "GET".equals(h.getRequestMethod())) {
                 handleGetByEpic(h);
                 return;
@@ -76,7 +107,7 @@ public class SubtaskHandler extends BaseHttpHandler {
             return;
         }
 
-        // проверим существование эпика
+        // validate epic existence
         if (manager.getEpicById(incoming.getEpicId()) == null) {
             sendNotFound(h, "Epic id=" + incoming.getEpicId() + " not found");
             return;
